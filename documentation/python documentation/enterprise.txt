@@ -1,0 +1,76 @@
+Help on module clitools.enterprise in clitools:
+
+NAME
+    clitools.enterprise
+
+FILE
+    c:\cli_gis\cli toolbox\scripts\clitools\enterprise.py
+
+FUNCTIONS
+    CheckForEnterpriseTables(map_document)
+        Check the input map document for the three tables that are necessary
+        for exporting or analyzing data in the CR Enterprise:
+        CLI Feature Table, CR Link Table, and CR Catalog Table
+        
+        Returns False if one of the three is missing from table of contents.
+    
+    ConvertFeatureXLSToGDBTable(input_xls_file_path, output_location, update_local_table=False)
+        Takes an excel workbook that has been created using the CLI Feature
+        Info query in the CLI online database, and subsequently has been cleaned
+        up following the procedures outlined in "How to Prepare an Update for
+        the CLI Feature Table" documentation included in this toolbox folder.
+        The values from the excel sheet will be read and then written to a new
+        table in a new file geodatabase.
+        
+        This process is designed to ensure easy and clean updates to the CLI
+        Feature Table that will be served through the NPS CR Enterprise
+        database. The intention is that the resulting file geodatabase table
+        can be sent to the data editor who will not need to do any sort of QA/QC
+        before using it to replace the existing CLI Feature Table in the NPS CR
+        Enterprise database.
+    
+    ExtractFromEnterpriseQuery(map_document, query_code, output_location, only_cr_link=False)
+        This function must be used from the CR Enterprise Access map
+        document.  It will take the input query code and extract all data that
+        matches it from each layer in the table of contents.  The user may only
+        download the CR Link table for these records, if desired.
+    
+    ExtractFromEnterpriseSelection(map_document, output_location, only_cr_link=False)
+        This function must be used from the CR Enterprise Access map
+        document.  Any currently selected features are downloaded to a new
+        geodatabase.  The user can chose to only download the CR Link table
+        records for all selected features.
+    
+    MakeUnitTableFromFeatureTable(table_geodatabase)
+        This function will look in the input table geodatabase for a table
+        called FeatureInfoLookup.  If it exists, it will look for the existing
+        corresponding UnitInfoLookup table, from which it must pull the
+        UNIT_TYPE information which is not already in the FeatureInfoLookup
+        table.  Then the FeatureInfoLookup table will be read, reordered, and
+        written to a new table that will take the place of the existing
+        UnitInfoLookup table.
+    
+    UpdateCLITables(map_document)
+        This tool takes no parameters.  It must be run from the CR_Enterprise
+        _Public_Access map document.  It uses the table view in the map document
+        of the CLI Feature Table to pull information to the local lookup tables
+        that are used in all of these functions throughout the clitools package.
+        This tool should be run by the user every time the CR CR_Enterprise
+        version of the CLI Feature Table is updated.
+    
+    strftime(...)
+        strftime(format[, tuple]) -> string
+        
+        Convert a time tuple to a string according to a format specification.
+        See the library reference manual for formatting codes. When the time tuple
+        is not present, current time as returned by localtime() is used.
+
+DATA
+    BinGDB = r'C:\CLI_GIS\CLI Toolbox\scripts\clitools\bin\CLI_InfoTables....
+    FeatureLookupTable = r'C:\CLI_GIS\CLI Toolbox\scripts\clitools\bin\CLI...
+    GDBstandard = r'C:\CLI_GIS\CLI Toolbox\scripts\clitools\bin\CLI_standa...
+    GDBstandard_link = r'C:\CLI_GIS\CLI Toolbox\scripts\clitools\bin\CLI_s...
+    NAD83prj = r'C:\CLI_GIS\CLI Toolbox\scripts\clitools\bin\projection da...
+    bin_dir = r'C:\CLI_GIS\CLI Toolbox\scripts\clitools\bin'
+    master_gdb = r'C:\CLI_GIS\CLI Toolbox\scripts\clitools\bin\CLI_InfoTab...
+    prj_nad83 = r'C:\CLI_GIS\CLI Toolbox\scripts\clitools\bin\projection d...

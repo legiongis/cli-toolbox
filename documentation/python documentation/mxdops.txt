@@ -1,0 +1,152 @@
+Help on module clitools.mxdops in clitools:
+
+NAME
+    clitools.mxdops
+
+DESCRIPTION
+    Contains a set of functions that are intended for use while editing or
+    viewing CLI data in ArcMap.
+    
+    If the clitools package is moved to the user's native Python installation,
+    all of these functions will be available to any python scripting.  Use the
+    following syntax to import the function:
+    
+    from clitools.general import <function_name>
+    
+    To move the clitools package to the Python folder, find your Python
+    installation folder (e.g. C:\Python27), and then find the 
+    ...\Lib\site-packages directory.  Perform the following actions:
+    
+    1. Move this clitools folder and all of its contents into the site-packages
+    directory.
+    2. From within the clitools folder, move the xlrd and xlwt folders and
+    their contents into the site-packages folder.
+
+FUNCTIONS
+    AddToDataFrame(map_document, dataframe, geodatabase_path, unit_code=False, layer_scheme='', id_fields=[], place_in_group=False, label=False, exclude_non_extant=False, omit_multiples=False)
+        Complex display function used to show CLI data in a variety of ways.
+        This function works on either a scratch geodatabase or a CLI standards
+        implementation model geodatabase.  The layer_sheme must be one of the
+        following: FEATCLASS, LANDCHAR, CONTRIB, and/or a list of id fields may
+        passed through the id_fields argument.
+        
+        Features can optionally be placed in a new group layer, labeled, or have
+        multiple geometries for the same cli_id omitted.
+    
+    GenerateCentroids(input_featureclass, target_featureclass)
+        Takes the input features, create centroids from them and then appends
+        those features to target_feature class, which must be a
+        point feature class. Only works with the ArcInfo product license.
+    
+    GetZoneID(dataframe, pcs_type)
+        This function makes a polygon out of the input dataframe current,
+        extent and using the specified zone shapefile (either UTM or state 
+        plane), figures out which zone the current view is in.  It returns
+        a warning if more than two zones are in the current view.
+    
+    LayerByCLIContribStatus(paths, map_document, data_frame, query='', place_in_group=False, group_name='', label=False, omit_multiples=False)
+        The features in the input paths will be added to the data frame, and
+        sorted based on CLI contributing status.  The categories used will be:
+        1. Contributing
+        2. Non-Contributing
+        3. Undetermined
+        4. Unknown
+        NOTE: The Unknown category will hold any features that do not fit the
+        others, as well as any that are marked as unknown.  For example,
+        Non-Contributing - compatible will be sorted to Unknown if it occurs.
+        
+        Features can optionally be placed in a new group layer, labeled, or have
+        multiple geometries for the same cli_id omitted.
+    
+    LayerByFeatureClass(paths, map_document, data_frame, query='', place_in_group=False, group_name='', label=False, omit_multiples=False)
+        This function will add a series of paths to the display, and will
+        symbolize them in a standard color scheme. They can optionally be placed
+        in a new group layer, labeled, or have multiple geometries for the same
+        cli_id omitted.
+    
+    LayerByIDPresence(geodatabase, id_field, map_document, data_frame, query='', place_in_group=False, group_name='', label=False, omit_multiples=False)
+        This function must use a CLI standards geodatabase, and by using the
+        CR_Link table, it will display all of the features in the geodatabase
+        in two separate group layers, based on whether or not the feature has
+        an associated program id in the indicated field.
+        
+        Features can optionally be placed in a new group layer, labeled, or have
+        multiple geometries for the same cli_id omitted.
+    
+    LayerByLandscapeCharacteristic(paths, map_document, data_frame, query='', place_in_group=False, group_name='', label=False, omit_multiples=False)
+        This function takes a set of input paths (generally, all the paths to
+        feature classes in a standards implementation model geodatabase) and
+        uses definition queries on these layers to add them to larger group
+        layers. The layers are grouped by landscape characteristic, and then a
+        standardized color scheme is applied.  The feature classes must have a
+        LAND_CHAR field filled out for the operation to work.
+        
+        Features can optionally be placed in a new group layer, labeled, or have
+        multiple geometries for the same cli_id omitted.
+    
+    ListVisibleFeatureLayers(map_document, data_frame)
+        this function will return a list of the visible layers in a given
+        data frame, excluding any that are not visible in the map display.
+        It is designed to exclude layers that are visible, but the group layers
+        that they reside in are not.
+        
+        NOTE: THIS IS UNTESTED AND SUSPECT, AND NOT USED IN ANY SCRIPTS 9-22-14
+        however, this would be a useful function to add to the UpdateFieldsIn
+        SelectedRecords tool, because it would allow for multiple layers with
+        the same name to be present, one would just have to be turned off.
+    
+    MakeGroupLayerInTOC(map_document, data_frame, name)
+        This function will create a group layer, place it in the dataframe,
+        and return a layer object for that group layer in the table of
+        contents. This is TOC layer is need to be able to add stuff to the group
+        layer.
+    
+    MakeKMZ(input_gdb, output_dir, subset_unit_code='', layer_scheme='', id_fields=[], label=False, exclude_non_extant=False, omit_multiples=False)
+        Uses the AddToDataFrame function to add data to a blank mxd.  The mxd
+        is then converted to a KMZ file using arcpy.conversion.MapToKML.
+    
+    SaveSourceInfoToTable(variable_dictionary)
+        This function will save the values in the input variable dictionary
+        to the master table that holds source info.
+    
+    SetSpatialReference(map_document, pcs_or_gcs, datum_year, zone='', pcs_type='')
+        Sets the input dataframe to the specified coordinate system, using
+        the .prj files in the bin folder.
+    
+    UpdateCLIFieldsInLayer(layer)
+        This function will iterate through the input rows, collect all
+        CLI_IDs from the input layer, use those for a query on the
+        FeatureInfoLookup table, and them pull all necessary information
+        from that table and write it to the input layer.
+        
+        Based on the existing value in the CLI_ID field, a feature will have
+        the following attributes filled:
+        RESNAME, LAND_CHAR, CLI_NUM, and CONTRIBRES
+    
+    UpdateRowsInLayer(layer, variable_dictionary, overwrite=False)
+        This function will take the input dictionary and use it to apply
+        new values to the rows in the input layer.  If a field in the
+        dictionary does not exist in the layer, it will be skipped without
+        any trouble.
+        
+        The variable_dictionary must be formatted this way:
+        
+        {"field_name":"new_value"}
+        
+        The overwrite option dictates whether old values in the layer will be
+        overwritten if there is a new value provided for that field.
+    
+    ZoomTo(input_code, map_document, data_frame_object)
+        Uses a region, park, or landscape code as input, and zooms to any
+        features that match this code.  The order in which the feature classes
+        are searched is as follows: "crland","crdist","crsite_py","crstru",
+        "crbldg","crobj","crothr".  This function works by selecting features
+        and zooming to the selection, so it may work incorrectly if there are
+        existing selections in any layers.
+    
+    strftime(...)
+        strftime(format[, tuple]) -> string
+        
+        Convert a time tuple to a string according to a format specification.
+        See the library reference manual for formatting codes. When the time tuple
+        is not present, current time as returned by localtime() is used.

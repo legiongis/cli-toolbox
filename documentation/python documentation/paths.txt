@@ -1,0 +1,8 @@
+Help on module clitools.paths in clitools:
+
+NAME
+    clitools.paths
+
+DESCRIPTION
+    Holds the paths to the lookup tables, files, and folders within the bin
+    directory.  All functions reference these variables.

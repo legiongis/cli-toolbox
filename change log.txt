@@ -1,0 +1,30 @@
+--001 12-10-14
+fixed problem with open file parameter in XLSSingleLandscape_v1.0.py (originally, parameter was passed to the function, but it should not have been.  the parameter should just have flagged an os.startfile(path) operation, not been passed to the spreadsheet creation function)
+
+--002 2-18-14
+fixed issue with SQL statement in classes.py that is in the early search cursor, sometimes threw error "TypeError: expected callable function - logger(obj)" (1. passed sql clause to the function as a named parameter, eliminating the empty arguments (just in case) 2. added a try/except statement that first tries to use the arcpy.da.SearchCursor with a sql clause to sort the results, and if that fails, the cursor is made without the sql_clause, and certain rows won't be sorted as nicely as before.  A print statement indicates whether the sorted or unsorted cursor has been used.)
+
+--003 2-19-15
+related to 001, more instances of the sql_clause parameter were changed in summarize.py.  Now, all places that an arcpy.da.SearchCursor attempts to use an sql_clause involve a try/except statement, where if the sql_clause causes an error, the except statement will run the cursor without sorting the rows.
+
+--004 date? 2016
+Julia Yu updated .gdb templates to include FMSS_Asset_ID column to the end of each layer's attribute table
+
+--005 9-12-2016
+Enterprise access.mxd is no longer valid.  This mxd improperly contained a db connection to the enterprise on an invalid user profile which allowed access to sensitive data by all users.  Non-data editors w/in NPS may utilize the CR_Enterprise_NonSensitive.mxd (or a version of this mxd) contained in both the toolbox and/or on the CRGIS Sharepoint. In fact, mxds are not even critical to running the "Extract from Enterprise" tool.  You can simply connect to the db using db authentication (directions on sharepoint) (or windows auth for editors) and load up all layers, cr catalog, cli feature table, and link table
+into a blank map document and run the tool.
+
+~~version 1.2 updates~~
+~~~~~~~08-31-17~~~~~~~~
+
+--006 
+fixed AddToDataFrame_v1.0 to include cli_id as in the list that is checked for whether a display option has been chosen
+files updated: AddToDataFrame_v1.0.py
+-AC
+
+--007
+issue: when an alpha code is used in the display geodatabase tool, and an ID presence is chosen as a display option (e.g. LCS_ID), a bad expression error occurs.
+fix: the bad expression happened in management.py in GetIDFieldGUIDs, because the alpha code query was passed to a selection on the CR_Link table, which doesn't have an ALPHA_CODE field.  removed the old_query variable from GetIDFieldGUIDs, as it was only added to improve performance.
+files updated: management.py, mxdops.py (only in print statements though)
+-AC
+
