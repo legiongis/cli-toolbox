@@ -1,3 +1,4 @@
+*.sr.lock
 settings.json
 ignore/
 
