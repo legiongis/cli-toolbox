@@ -12,6 +12,7 @@ Welcome to CLI Toolbox's documentation!
    
    home
    installation
+   start_GUIDs
 
 
 
