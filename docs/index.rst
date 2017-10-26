@@ -13,6 +13,7 @@ Welcome to CLI Toolbox's documentation!
    home
    installation
    start_GUIDs
+   tips_CLI_googlearth
 
 
 
