@@ -14,6 +14,7 @@ Welcome to CLI Toolbox's documentation!
    installation
    start_GUIDs
    tips_CLI_googlearth
+   create_newfeattbl
 
 
 
