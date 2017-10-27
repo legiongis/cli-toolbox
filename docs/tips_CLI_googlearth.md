@@ -34,12 +34,12 @@ Further tips:
 
 - For overlapping features, you can turn off individual features themselves. See the following two images, where the user 1. clicked on the feature PHF Lower Yard in the map, and then 2. turned that feature off and got the name of the one underneath it.
 
-##### Step 1.
+**Step 1.**
 
 ![CLI_GE_6](https://github.com/legiongis/clitoolbox/raw/master/docs/img/cli_ge_6_125.JPG "PHF LowerYard Image 6")
 
 
-##### Step 2.
+**Step 2.**
 
 ![CLI_GE_7](https://github.com/legiongis/clitoolbox/raw/master/docs/img/cli_ge_7_125.JPG "Next Image 7")
 
