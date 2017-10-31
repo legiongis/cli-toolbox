@@ -6,17 +6,16 @@ Background: The CLI Feature Table is the master table that is served through the
 Alternatively: If you have just added a new landscape to the CLI and you would like to create spatial data for it, you can follow this procedure to update your local feature tables to include the brand new features. If this is your goal, there is no need to pass the table on to a data editor for inclusion in the Enterprise.
 
 
-**1. Log on to the CLI online database**
-   - You need at least read-access to the database. http://www.hscl.cli.nps.gov
-
-**2. Query the database and download results**
-   - a. Go to the “Standard Queries” tab, and locate these two queries (author: Debbie Smith)
-     - i. *CLI Lookup Table -- Features*
-     - ii. *CLI Lookup Table -- Units*
-   - b. For both of these queries, run them and download the results
-     - i. The feature query should return over 50,000 records, the unit query should return approximately 750 (of course, these numbers will grow over time)
-     - ii. To download the results, click on the query name above the records and choose Download
-     - iii. Choose MS Excel as the download format, and be sure to download all records. The feature query results may take a while to download.
+1. **Log on to the CLI online database**
+    1. You need at least read-access to the database. http://www.hscl.cli.nps.gov
+1. **Query the database and download results**
+    1. Go to the “Standard Queries” tab, and locate these two queries (author: Debbie Smith)
+        1. *CLI Lookup Table -- Features*
+        1. *CLI Lookup Table -- Units*
+    1. For both of these queries, run them and download the results
+        1. The feature query should return over 50,000 records, the unit query should return approximately 750 (of course, these numbers will grow over time)
+        1. To download the results, click on the query name above the records and choose Download
+        1. Choose MS Excel as the download format, and be sure to download all records. The feature query results may take a while to download.
 
 **3. Clean up Feature Results in MS Excel**
    - a. Open the downloaded results from the *CLI Lookup Table – Features* query in MS Excel. Because of its size, it may take a minute to open. You may get a warning, but click “Yes” or “OK”.
