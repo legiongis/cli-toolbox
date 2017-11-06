@@ -4,7 +4,7 @@ This is a collection of ArcGIS tools that has been built to facilitate the creat
 
 Example of image:
 
-![hey dubuque library](https://github.com/legiongis/clitoolbox/raw/master/docs/img/dubuque_library.jpg "Hello Dubuque!!")
+![hey dubuque library](img/dubuque_library.jpg "Hello Dubuque!!")
 
 example of link
 [google](https://google.com)
