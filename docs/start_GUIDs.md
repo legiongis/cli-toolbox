@@ -6,23 +6,23 @@ _note: A GUID looks something like: C84087D5-E035-4275-8E3C-444617049CC0_
 
 
 #### Olson Well
-![Olson Well](https://github.com/legiongis/clitoolbox/raw/master/docs/img/OlsonWell.JPG "Olson Well")
+![Olson Well](img/OlsonWell.JPG "Olson Well")
 
 
 #### Hans Halseth House
-![Hans Halseth House](https://github.com/legiongis/clitoolbox/raw/master/docs/img/HansHalsethHouses.JPG "Halseth House")
+![Hans Halseth House](img/HansHalsethHouses.JPG "Halseth House")
 
 
 #### Sugar Maple Trees
-![Sugar Maple Trees](https://github.com/legiongis/clitoolbox/raw/master/docs/img/SugarMapleTrees.JPG "Sugar Maple Trees")
+![Sugar Maple Trees](img/SugarMapleTrees.JPG "Sugar Maple Trees")
 
 
 #### Fences
-![Fences](https://github.com/legiongis/clitoolbox/raw/master/docs/img/Fences.JPG "Fences")
+![Fences](img/Fences.JPG "Fences")
 
 
 #### Barn, Milkhouse and Retaining Wall 
 _note: composite features like this are found in the CLI from time to time_
 
-  ![Barn, Milkhouse and Retaining Wall](https://github.com/legiongis/clitoolbox/raw/master/docs/img/BarnMilkhs.JPG "Barn, Milkhouse")
+  ![Barn, Milkhouse and Retaining Wall](img/BarnMilkhs.JPG "Barn, Milkhouse")
 
