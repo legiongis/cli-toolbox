@@ -1,6 +1,6 @@
 ### About the CLI Toolbox
 
-#### PREFACE
+#### Preface
 
 The CLI Toolbox is tailored to the specific needs of NPS Cultural Landscapes Program staff working with GIS data. The tools are designed to facilitate the creation of GIS data for new cultural landscapes, as well as the analysis and improvement of existing landscape GIS data that resides in the CR Enterprise spatial database, which is served throughout the NPS network. Because direct edits to the NPS CR Enterprise database can only be made by the designated regional data editors, this toolbox is intended as a way for Cultural Landscapes Program staff to create or improve data that will be easy for the data editors to improve the CR Enterprise.
 
@@ -8,13 +8,13 @@ Beyond the Cultural Landscapes Program, the CLI Toolbox also aims to facilitate 
 
 *TECHNICAL NOTE: Throughout this document, any mention of a “geodatabase” refers to an ESRI file geodatabase (\*.gdb), not an MS Access-based personal geodatabase (\*.mdb).*
 
-#### ACKNOWLEDGEMENTS
+#### Acknowledgements
 
 The creation of the CLI Toolbox was greatly aided by the following NPS staff:
 Deidre McCarthy and Matt Stutts (CR-GIS), Tim Layton (OCLP), Allen McCoy, Susan Dolan, and Julia Yu (PWRO-Seattle), Vida Germano (PWRO-San Francisco), Angie Southwould (AKRO), Cassidy Van Beek (MWRO), Tom Gwaltney, Janice Vogel, and Mike Commisso (NCRO), and Andras Nagy (NCPTT)
 
 
-### PART 1: BACKGROUND INFORMATION
+### PART 1: Background Information
 
 #### Project Background
 
@@ -38,7 +38,7 @@ The CLI Toolbox is an aggregation of these tools and scripts into a well-ordered
 
 In creating this toolbox and the accompanying documentation, we hope to establish a protocol for the future creation and use of GIS data within the Cultural Landscapes Program. Though this guidance document can act as a strict procedural guide, it’s also important to keep in mind that these tools are designed for maximum flexibility; they function outside of the workflows described here, as well as outside of the CLI altogether.
 
-##### About the Cultural Landscape Inventory
+#### About the Cultural Landscape Inventory
 
 Very central to understanding how GIS will be used in the CLI, and ultimately incorporated into the NPS Cultural Resource Enterprise database, is the construction of the CLI database itself. At the most basic level, there are two types of objects from the CLI that are included in the GIS, features and boundaries.
 
@@ -71,7 +71,7 @@ Midwest Region>SLBE>500003>Vegetation>105248.
 
 It is important to note that in some cases, a given landscape is designated in the CLI as a component landscape that fits within a larger parent landscape. Because this is not a relationship that applies to all landscapes, and because parent landscapes and component landscapes both have their own CLI numbers and their own sets of features, this parent/component relationship is not built into the three-tiered hierarchy that is found in the toolbox.
 
-##### About the NPS CR Spatial Data Transfer Standards
+#### About the NPS CR Spatial Data Transfer Standards
 
 The CLI Legacy Conversion project was based on the use of the NPS CR Spatial Data Transfer Standards, as defined by the v2 documentation released by CR-GIS in January, 2014. These standards are a set of attributes designed to track the creation and lineage of cultural resource spatial data in the NPS. In addition to documenting the transfer standards, CR-GIS also designed a geodatabase schema that is based on them, which is intended as an implementation model for the transfer standards. The January 2014 documentation describes both the transfer standards themselves, as well as the implementation model. This documentation is included with the CLI Toolbox (document named “CulturalResourceStandards_Guidelines_v2.pdf”), and can be found on IRMA as well (https://irma.nps.gov/App/Portal/Topics/Cultural, follow the “Cultural Resource Digital Layer Standards” link).
 
@@ -79,7 +79,7 @@ The implementation model is also the foundation of the schema of the NPS CR Ente
 
 However, there are a few additions that were made to the implementation schema to accommodate the unique nature of the CLI database, which result in a geodatabase template called the CLI Standards. This format is the basis for most operations in the CLI toolbox, and is described in more detail in the following pages.
 
-##### About the CLI Standards Geodatabase
+#### About the CLI Standards Geodatabase
 
 The CLI Standards Geodatabase is based very closely on the v2 Spatial Data Transfer Standards Geodatabase Implementation model that is described in the v2 transfer standards documentation released by CR-GIS in January 2014. The geodatabase comprises a set of feature classes (inside of feature class datasets) that are based on the National Register features types. Each feature class has all of the spatial data transfer standards fields, and the only significant addition to in the CLI Standards model are the CLI_ID, LAND_CHAR, and CLI_NUM fields which are described in the “About the Cultural Landscape Inventory” section above.
 
@@ -106,7 +106,7 @@ The CLI Standards geodatabase contains two tables called “CR_Link” and “CR
 When landscape GIS data is in this geodatabase schema, many useful operations can be carried out on it. For example, one may display all of the features in a landscape based on their contributing status in the CLI, or one may export a Google Earth file that has all of the landscape features grouped and colored by their respective landscape characteristic. Most importantly, this schema is very close to that of the NPS CR Enterprise database, so this will be an easy format for data editors to deal with when uploading new landscape data to the Enterprise (see p. ????).
 
 
-##### About the CR Link and CR Catalog Tables
+#### About the CR Link and CR Catalog Tables
 
 Near the end of the CLI Legacy Conversion project, the addition of the CR Catalog table was made to the CLI Standards schema. The CR Catalog concept was developed by the Alaska Region, and is implemented in the NPS CR Enterprise database. This reconfiguration increases the ease with which a user can update the program IDs that are stored in the CR Link table (NRIS reference numbers, LCS numbers, FMSS numbers, etc.).
 
@@ -122,7 +122,7 @@ Put another way: the CR Link table lists all of the CR_IDs and their associated 
 For more information on the way the CR Link tables and CR Catalog tables are constructed, see pp. 54, and 73-74 of the Cultural Resource Spatial Data Transfer Standards v2 documentation.
 
 
-##### CLI Toolbox Key Concepts
+#### CLI Toolbox Key Concepts
 The following are elaborations on a few important concepts that are integral to the design and implementation of the tools in the CLI Toolbox.
 
 
