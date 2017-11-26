@@ -20,7 +20,7 @@ Here are a few important notes regarding the general use of tools in ArcGIS.
 
 The easiest way to begin creating data for a new landscape is to use the **_Create New Project Folder_** tool.
 
-1. Open the Create New Project Folder tool from ArcMap or ArcCatalog
+1. Open the **_Create New Project Folder_** tool from ArcMap or ArcCatalog
 
 2. Enter the Region Code, Alpha Code and CLI Number for the landscape (see Figure 5).
 
@@ -28,24 +28,23 @@ The easiest way to begin creating data for a new landscape is to use the **_Crea
 
 4. Click OK to run the process.
 
+Figure 5. Dialog box for Create New Project Folder
+
 This will create a new folder named by the landscape number and embedded in the preferred directory structure. This folder will contain a new scratch geodatabase and map document, both named with the CLI number.
 
-The map document and scratch geodatabase templates that are used in this process are located in the bin folder (CLI Toolbox\scripts\clitools\bin). If desired, modifications can be made to the map document template and they will be present in all future project folders. For example, one may want to have a layer of counties or an imagery basemap present in each new map document. Just locate the “mxd_template.mxd” in the bin folder, add the desired layers to it, and save it. At present, the NPS boundary layer is in the map document template, as well as each of the scratch feature classes from the accompanying scratch gdb. (Warning: Do not remove the NPS boundary layer from the template map document. This will cause an error when the tool tries to zoom to the Alpha Code that has been entered.)
+The map document and scratch geodatabase templates that are used in this process are located in the bin folder (CLI Toolbox\scripts\clitools\bin). If desired, modifications can be made to the map document template and they will be present in all future project folders. For example, one may want to have a layer of counties or an imagery basemap present in each new map document. Just locate the “mxd\_template.mxd” in the bin folder, add the desired layers to it, and save it. At present, the NPS boundary layer is in the map document template, as well as each of the scratch feature classes from the accompanying scratch gdb. (Warning: Do not remove the NPS boundary layer from the template map document. This will cause an error when the tool tries to zoom to the Alpha Code that has been entered.)
 
-**Importing Existing Spatial Data**
+#### Importing Existing Spatial Data
 
 **_The Import to Scratch GDB_** tool is the best way to prepare an existing dataset for inclusion in a CLI Standards geodatabase. Or, more generally, it’s a good way to add and populate all of the standards-compliant fields.
 
-  1. Open the Import to Scratch GDB tool from ArcMap or ArcCatalog
+  1. Open the **_Import to Scratch GDB_** tool from ArcMap or ArcCatalog
   2. Locate the dataset (e.g. a feature class or shapefile) to be imported to a scratch geodatabase. In fact, any geodatabase can work as the target; a scratch geodatabase is not required.
 3. Enter values for any fields that you’d like to batch-populate during the process.
 4. See the tool dialog help for more information on each parameter.
 5. Click OK to run the process.
+
 When a feature class or shapefile is imported with this tool, a copy of the dataset is made in the target geodatabase and all of the CLI standards fields are added to it, while all of its original fields and attributes are retained. The original dataset itself is unaltered.
-
-
-Figure 5. Dialog box for Create New Project Folder
-
 
 In addition to the CLI standards fields, the “fclass” field is also added. As explained in more detail later (see p. ???), if features are to be taken from this imported feature class to a CLI Standards geodatabase using the **_Sort Scratch to Standards_** tool, they must have a value in the “fclass” field.
 
@@ -62,7 +61,7 @@ Creating new data can be thought of as a two-step process: making geometry, and 
 
 <p align= "center">--CREATING GEOMETRY--</p>
 
-While creating geometry for features, only two fields need to be filled out each time a feature is created: the CLI_ID and “fclass” fields. All other fields can be batch-populated later. To digitize features from an aerial, add an imagery basemap, begin an edit session in the scratch geodatabase, and draft features in the point, line, or polygon feature class.
+While creating geometry for features, only two fields need to be filled out each time a feature is created: the `CLI_ID` and “fclass” fields. All other fields can be batch-populated later. To digitize features from an aerial, add an imagery basemap, begin an edit session in the scratch geodatabase, and draft features in the point, line, or polygon feature class.
 
 
 Here are a few tools from the editing toolset that are useful for this process:
@@ -77,45 +76,45 @@ In addition to digitizing (drawing) new data, feature geometry can also be copie
 
 Use these steps to copy and paste features:
 
-1. In ArcMap, add the source and target datasets to the table of contents.
-2. Start an Edit session in the scratch geodatabase.
-3. Select only the features that you wish to copy from the source dataset.
-4. Right-click in the data frame (you must be in Data View) and select Copy.
-5. Right-click in the data frame again and select Paste.
-6. Select the scratch feature class into which you’d like to paste the features.
+1.  In ArcMap, add the source and target datasets to the table of contents.
+2.  Start an Edit session in the scratch geodatabase.
+3.  Select *only* the features that you wish to copy from the source dataset.
+4.  Right-click in the data frame (you must be in Data View) and select Copy.
+5.  Right-click in the data frame again and select Paste.
+6.  Select the scratch feature class into which you’d like to paste the features.
 
-This can be a very slick process, because it is an Append operation with the schema type set to “NO_TEST”. This means that any fields that are common between the original and the target will have their values transferred.
+This can be a very slick process, because it is an Append operation with the schema type set to “NO\_TEST”. This means that any fields that are common between the original and the target will have their values transferred.
 
 To take this concept further, consider the following example of how it can be used to get geometry from a single imported feature class into many different scratch geodatabases, i.e. many different landscapes.
 
-1. Create a blank geodatabase in the alpha code folder, for example, C:\CLI_GIS\Midwest Region\SLBE\empty.gdb
-2. If you have a dataset that will be used in all of the landscapes in SBLE, say trails.shp use **_Import to Scratch GDB_** to import this dataset into the new empty.gdb, instead of importing it to an individual scratch geodatabase. The result will be a feature class called imp_trails.
-3. Add imp_trails as a layer in all of the landscape map documents for SLBE, and, using the process described above, copy and paste features from imp_trails into the scratch feature classes for that landscape.
-4. Only update the CLI_ID and “fclass” values once the feature has been pasted into the scratch feature class.
-5. Now, your scratch feature classes will have a combination of newly digitized features (from you) and imported features (copied from imp_buildings), while the original imp_buildings feature class remains unaltered.
+1.  Create a blank geodatabase in the alpha code folder, for example, C:\CLI\_GIS\Midwest Region\SLBE\empty.gdb
+2. If you have a dataset that will be used in all of the landscapes in SBLE, say trails.shp use **_Import to Scratch GDB_** to import this dataset into the new empty.gdb, instead of importing it to an individual scratch geodatabase. The result will be a feature class called imp\_trails.
+3. Add imp\_trails as a layer in all of the landscape map documents for SLBE, and, using the process described above, copy and paste features from imp\_trails into the scratch feature classes for that landscape.
+4. Only update the `CLI_ID` and “fclass” values once the feature has been pasted into the scratch feature class.
+5. Now, your scratch feature classes will have a combination of newly digitized features (from you) and imported features (copied from imp\_buildings), while the original imp\_buildings feature class remains unaltered.
 
 
 <p align= "center">--UPDATING FIELDS--</p>
 
-Once you have geometry for all of your features, and they all have a CLI_ID and an “fclass” value, you can use **_Update Fields in Selected Records_** to batch populate (almost!) all of the remaining fields. Simply select all of the features you wish to update, enter information in the tool dialog for whatever fields you’d like to fill out, and run the tool. There are a number of special methods within the dialog box that allow for quick ways to fill the parameters, all of which are documented within the tool dialog itself. One of these features that deserves explanation here is the “Get CLI Info from Table” checkbox. If this box is checked, all of the CLI-related fields will be updated for each feature based on its CLI_ID. The fields that are updated are:
+Once you have geometry for all of your features, and they all have a `CLI_ID` and an “fclass” value, you can use **_Update Fields in Selected Records_** to batch populate (almost!) all of the remaining fields. Simply select all of the features you wish to update, enter information in the tool dialog for whatever fields you’d like to fill out, and run the tool. There are a number of special methods within the dialog box that allow for quick ways to fill the parameters, all of which are documented within the tool dialog itself. One of these features that deserves explanation here is the “Get CLI Info from Table” checkbox. If this box is checked, all of the CLI-related fields will be updated for each feature based on its `CLI_ID`. The fields that are updated are:
 
-- CLI_NUM (number for landscape that the feature is in)
+- `CLI_NUM` (number for landscape that the feature is in)
 
-- LAND_CHAR (the feature’s landscape characteristic category)
+- `LAND_CHAR` (the feature’s landscape characteristic category)
 
-- RESNAME (feature name)
+- `RESNAME` (feature name)
 
-- CONTRIBRES (contributing status)
+- `CONTRIBRES` (contributing status)
 
-- ALPHA_CODE (alpha code for park location of feature)
+- `ALPHA_CODE` (alpha code for park location of feature)
 
-- UNIT (name of park)
+- `UNIT` (name of park)
 
-- REGION_CODE (name of region)
+- `REGION_CODE` (name of region)
 
-- UNIT_TYPE (type of park)
+- `UNIT_TYPE` (type of park)
 
-All of this information is pulled from the CLI Lookup Tables that are described on page 7. Filling these fields with this method ensures that the GIS data is a direct reflection of the CLI.
+All of this information is pulled from the CLI Lookup Tables that are described on page ???. Filling these fields with this method ensures that the GIS data is a direct reflection of the CLI.
 
 Recommended use for **_Update Fields in Selected Records:_**
 
@@ -130,10 +129,10 @@ Recommended use for **_Update Fields in Selected Records:_**
 
 Further notes on the **_Update Fields in Selected Records_** tool:
 
-- There cannot be layers
+- **_There cannot be layers
 present in the table of
 contents that have the
-same name. This is a
+same name._** This is a
 shortcoming, but simply
 renaming the offending
 layers in the table of
@@ -167,16 +166,16 @@ Figure 8. Illustration of what happens when using the Sort Scratch Into Standard
 
 On the left of Figure 8 there is a scratch geodatabase that has features in the scratch point and polygon feature classes, as well as some in an imported feature class called imp_buildings (no features have been drafted in the scratch_ln feature class). As you see, by using the **_Sort Scratch Into Standards_** tool, these features are sorted into various feature classes within the CLI standards geodatabase (the text in the middle is output from that tool). The operation is all based on each feature’s “fclass” value.
 
-If the **_Sort Scratch Into Standards_** tool is run and a feature does not have a value in the “fclass” field, that feature will be ignored during the operation. This is essential because, referring to the example above, there may be hundreds of buildings in the imported buildings feature class (imp_buildings), but only five of them were buildings in this landscape, so only five were assigned “fclass” values (three values were “crbldg_py” and two were “crstru_py”). This is a good example of the ease with which the user is able to split features in the same imported feature class into multiple standards feature classes. This may not be necessary if you have a single GPS file for one feature, but it is in cases where a dataset covers a large geographic area or large variety of feature types.
+If the **_Sort Scratch Into Standards_** tool is run and a feature does _not_ have a value in the “fclass” field, that feature will be ignored during the operation. This is essential because, referring to the example above, there may be hundreds of buildings in the imported buildings feature class (imp_buildings), but only five of them were buildings in this landscape, so only five were assigned “fclass” values (three values were “crbldg_py” and two were “crstru_py”). This is a good example of the ease with which the user is able to split features in the same imported feature class into multiple standards feature classes. This may not be necessary if you have a single GPS file for one feature, but it is in cases where a dataset covers a large geographic area or large variety of feature types.
 
 If the data import, creation, and field population steps are all followed as described above, the result of this sorting operation will be a CLI Standards geodatabase with the features from the scratch geodatabase sorted into the correct feature classes. However, there are a few more steps necessary to complete the CLI Standards geodatabase.
 
-Steps for using Sort Scratch Into Standards
-1. Open the Sort Scratch Into Standards tool from ArcMap or ArcCatalog.
+Steps for using **_Sort Scratch Into Standards_**
+1. Open the **_Sort Scratch Into Standards_** tool from ArcMap or ArcCatalog.
 2. Locate the scratch geodatabase (e.g. a feature class or shapefile) that contains feature classes with features to sort.
 3. Select which feature classes have features that should be sorted to the new CLI Standard geodatabase.
 4. If the features should be added to an existing CLI Standard geodatabase (for example, a regional geodatabase), enter this geodatabase as the target.
-5. If no target is provided, a new CLI Standard geodatabase will be created which contains only the newly sorted data. (This can later be incorporated into a regional or park geodatabase using the Merge Standards GDBs tool.)
+5. If no target is provided, a new CLI Standard geodatabase will be created which contains only the newly sorted data. (This can later be incorporated into a regional or park geodatabase using the **_Merge Standards GDBs_** tool.)
 6. Click OK to run the process.
 
 #### Completing the CLI Standards Geodatabase
@@ -184,22 +183,22 @@ Steps for using Sort Scratch Into Standards
 Once features have been sorted into a CLI Standards geodatabase, there are a few final steps before that geodatabase is fully ready for analysis and upload to the CR Enterprise database, or for aggregation with other CLI Standards geodatabases. Follow the numbered steps below, and read past them for a more detailed description of the tools and processes involved.
 
 1. Finalize all geometry:
-   1. Use Zoom To Unit to move between various landscapes
-   1. Use Generate Centroids for any polygons representing buildings or structures
+   1. Use **_Zoom To Unit_** to move between various landscapes
+   1. Use **_Generate Centroids_** for any polygons representing buildings or structures
    1. Make any necessary modifications to geometry of existing features
   
 1. Finalize all fields:
-   1. Use the Check Mandatory Fields to make sure there are no Null values in the required fields (disregard GUIDs)
-   1. Use Update Fields in Selected Records to batch update data creation or source information if missing
-   1. Use Check Values Against Domains to make sure all attributes meet the standards domain values
-   1. Use the Fix Field in GDB tool to standardize attributes across all feature classes
+   1. Use the **_Check Mandatory Fields_** to make sure there are no Null values in the required fields (disregard GUIDs)
+   1. Use **_Update Fields in Selected Records_** to batch update data creation or source information if missing
+   1. Use **_Check Values Against Domains_** to make sure all attributes meet the standards domain values
+   1. Use the **_Fix Field in GDB_** tool to standardize attributes across all feature classes
   
-1. Use Create GUIDs to create GUIDs for all features in the geodatabase (do not overwrite GUIDs)
+1. Use **_Create GUIDs_** to create GUIDs for all features in the geodatabase (do not overwrite GUIDs)
 
-1. Use Sync CR Link and Catalog Tables to populate and consolidate the CR Link and CR Catalog tables
-   1. During Sync CR Link and Catalog Tables, an error log will be created with if a CR_ID has conflicting program IDs. If this is the case, rerun the tool once. If the errors persist, follow these steps:
+1. Use **_Sync CR Link and Catalog Tables_** to populate and consolidate the CR Link and CR Catalog tables
+   1. During **_Sync CR Link and Catalog Tables_**, an error log will be created with if a `CR_ID` has conflicting program IDs. If this is the case, rerun the tool once. If the errors persist, follow these steps:
       1. Make sure entire geodatabase is visible in data frame
-      1. Use the Find function (look for in the Tools toolbar) with problematic CR_IDs from log to locate the conflicting spatial data
+      1. Use the Find function (look for ??? in the Tools toolbar) with problematic CR_IDs from log to locate the conflicting spatial data
       1. Use ctrl + F in the CR Link table to find problematic CR_IDs and associated program IDs
       1. Make sure that the CR_ID in the CR Link table has the correct program ID.
       1. As necessary, calculate new CR_IDs for specific spatial features (see below)
