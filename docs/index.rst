@@ -13,6 +13,7 @@ Welcome to CLI Toolbox's documentation!
    home
    installation
    use_tools_create_data
+   display_review_data
    start_GUIDs
    tips_CLI_googlearth
    create_newfeattbl
