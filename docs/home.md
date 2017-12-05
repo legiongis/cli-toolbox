@@ -27,7 +27,7 @@ From the outset, the following rules were used to define the scope of work for t
 - The Alaska Region CLI features would not be included as the AKRO GIS staff was tackling the same project on their own.
 - Landscapes would only be included if their Inventory Status in the CLI had been marked as “Complete” by November 2012.
 - Officially, only Contributing features would be included, though if convenient, Non-Contributing or Undetermined features may be included as well. (At first, all features were expected to be included, until this clearly became an unrealistic goal.)
-- Though there are many features described in each landscape, only features that have been listed individually in the CLI would be included (for more information on what this means, see “About the Cultural Landscape Inventory” on ??? page ??? ).
+- Though there are many features described in each landscape, only features that have been listed individually in the CLI would be included (for more information on what this means, see “About the Cultural Landscape Inventory” on page 2).
 
 Using these guidelines, the scope of work for the legacy project included approximately 22,000 features in approximately 650 landscapes. While creating data for all of these features and landscapes, many Python scripts and ArcGIS tools were created in order to:
 
@@ -103,7 +103,7 @@ Surveyed Areas (surveyed areas…)
 
 The CLI Standards geodatabase contains two tables called “CR_Link” and “CR_Catalog.” These are non-spatial tables that serve to make connections between the spatial data and all of the various NPS CR programs that have documented them. For example, a house may be listed as a feature in the CLI, an entry in the National Register, as well as in the List of Classified Structures, and it will most certainly have a listing in FMSS, the NPS facilities management system. In such a case, the row in the CR Link table that holds the CR_ID for that house will list its CLI Feature ID, National Register Reference Number, List of Classified Structures Number, and FMSS Asset Code. This allows for a linkage between various cultural resource databases. See the next section for a more detailed description of how these two tables interact.
 
-When landscape GIS data is in this geodatabase schema, many useful operations can be carried out on it. For example, one may display all of the features in a landscape based on their contributing status in the CLI, or one may export a Google Earth file that has all of the landscape features grouped and colored by their respective landscape characteristic. Most importantly, this schema is very close to that of the NPS CR Enterprise database, so this will be an easy format for data editors to deal with when uploading new landscape data to the Enterprise (see p. ????).
+When landscape GIS data is in this geodatabase schema, many useful operations can be carried out on it. For example, one may display all of the features in a landscape based on their contributing status in the CLI, or one may export a Google Earth file that has all of the landscape features grouped and colored by their respective landscape characteristic. Most importantly, this schema is very close to that of the NPS CR Enterprise database, so this will be an easy format for data editors to deal with when uploading new landscape data to the Enterprise (see p. 28).
 
 
 #### About the CR Link and CR Catalog Tables
@@ -169,7 +169,7 @@ Ultimately, the regular user of this toolbox need not touch these tables at all.
 The tools in the CLI Toolbox are split into 5 toolsets. Each set of tools is geared toward a certain type of usage. However, many workflows may include tools from various toolsets. The following is a quick description of each toolset:
 
 - *CR Enterprise Access*
-  These are tools designed to interact with the NPS CR Enterprise Database. This is a database that acts as a repository for all NPS cultural resource spatial data. The Feature Table Update toolset has two tools to assist with the maintenance of the CLI Lookup tables (see p.???). These tools must be run from ArcMap, using the CR Enterprise Access map document that is included in this installation.
+  These are tools designed to interact with the NPS CR Enterprise Database. This is a database that acts as a repository for all NPS cultural resource spatial data. The Feature Table Update toolset has two tools to assist with the maintenance of the CLI Lookup tables (see p.7). These tools must be run from ArcMap, using the CR Enterprise Access map document that is included in this installation.
 - *Editing Tools*
   These tools are designed to assist with various data creation and editing tasks that will be common throughout the spatial data creation process. They must be run from ArcMap, not ArcCatalog.
 - *Review Tools*
