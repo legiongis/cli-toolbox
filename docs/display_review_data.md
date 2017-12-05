@@ -1,7 +1,7 @@
-table.
-- 23 -
-PART 3: USING THE TOOLS TO DISPLAY AND REVIEW DATA
-Displaying the Contents of a Geodatabase
+### PART 3: USING THE TOOLS TO DISPLAY AND REVIEW DATA
+
+*Displaying the Contents of a Geodatabase*
+
 One of the most useful ways that this data can be used is to display it with different symbology and layering schemes. Use the Display Geodatabase tool to do this. Either a CLI Standards geodatabase or a Scratch geodatabase can be displayed, though with a scratch geodatabase, the display options are significantly reduced (due to the lack of CR Link table). The Display Geodatabase tool must be run from ArcMap.
 1. Open the Display Geodatabase tool from ArcMap.
 2. Locate the geodatabase you’d like to display
