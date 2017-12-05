@@ -23,6 +23,7 @@ Welcome to CLI Toolbox's documentation!
 
 Indices and tables
 ==================
+   AppendixA
 
 * :ref:`genindex`
 * :ref:`modindex`
