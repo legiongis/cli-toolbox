@@ -76,9 +76,17 @@ def GetZoneID(dataframe,pcs_type):
     lyr = "fl"
     TakeOutTrash(lyr)
 
+    df_sr = dataframe.spatialReference
+    if df_sr.name == "":
+        arcpy.AddError("\nCannot set a PCS because the data frame has no "\
+                        "spatial reference. Please set a GCS or add "\
+                        "some layers and rerun this tool.\n")
+        return False
+
     dfAsFeature = arcpy.Polygon(arcpy.Array([dataframe.extent.lowerLeft,
          dataframe.extent.lowerRight, dataframe.extent.upperRight,
-          dataframe.extent.upperLeft]),dataframe.spatialReference)
+          dataframe.extent.upperLeft]),df_sr)
+
     arcpy.management.MakeFeatureLayer(shp, lyr)
     arcpy.SelectLayerByLocation_management(lyr, "INTERSECT",
                                            dfAsFeature, "", "NEW_SELECTION")
