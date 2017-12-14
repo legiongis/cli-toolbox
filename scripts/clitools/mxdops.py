@@ -1088,18 +1088,15 @@ def ZoomTo(input_code,map_document,data_frame_object):
     existing selections in any layers.
     '''
 
-    unit = MakeUnit(input_code)
-
-    if not unit:
-        if len(input_code) == 6:
-            query = '"CLI_NUM" = \'' + input_code + "'"
-        elif len(input_code) == 4:
-            query = '"ALPHA_CODE" = \'' + input_code.upper() + "'"
-        else:
-            arcpy.AddError("\ninvalid input.\n")
-            return False
+    if len(input_code) == 6:
+        query = '"CLI_NUM" = \'' + input_code + "'"
+    elif len(input_code) == 4:
+        query = '"ALPHA_CODE" = \'' + input_code.upper() + "'"
+    elif len(input_code) == 3:
+        query = '"REG_CODE" = \'' + input_code.upper() + "'"
     else:
-        query = unit.query
+        arcpy.AddError("\ninvalid input.\n")
+        return False
 
     arcpy.AddMessage("query used: " + query + "\n")
 
@@ -1112,12 +1109,13 @@ def ZoomTo(input_code,map_document,data_frame_object):
 
         for layer in [l for l in filter_layers if fc in l.dataSource]:
 
-            Print(layer.dataSource)
+            Print("looking for features in: {}".format(layer.name))
             arcpy.management.SelectLayerByAttribute(layer,"NEW_SELECTION",query)
             ct = int(arcpy.management.GetCount(layer).getOutput(0))
-            arcpy.AddMessage("count: " + str(ct))
+            Print("  found {}".format(ct))
             if ct == 0:
                 continue
+            Print("  zooming to features.")
             data_frame_object.zoomToSelectedFeatures()
             arcpy.management.SelectLayerByAttribute(layer,'CLEAR_SELECTION')
             arcpy.RefreshTOC()
