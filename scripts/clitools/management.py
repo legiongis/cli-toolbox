@@ -809,270 +809,300 @@ def ImportKMLToGDB(kml_or_kmz_file,target_gdb):
         print arcpy.GetMessages(1)
 
 def ImportToScratchGDB(input_fc,gdb_path,clip_features='',
-    variable_dictionary={}):
+    variable_dictionary={},keep_native=False):
     """Imports the input features to a target geodatabase, and adds all NPS
     CR spatial data transfer standards fields during the process.  They will
     be prepopulated with the attributes provided in the variable dictionary.
     """
 
-    try:
-        #create the variable "shrtName" used to name the output
-        fcName = os.path.basename(input_fc)
-        int_name = os.path.splitext(fcName)[0]
-        bad_char = ["(",")","'",'"',"\\","/","*","#","&","+"]
-        for char in bad_char:
-            int_name = int_name.replace(char,"")
-        shrtName = int_name.replace(" ", "_")
-        shrtName = shrtName.replace("-", "_")
-        arcpy.AddMessage("\nInput Feature Class: "+shrtName)
+    # try:
+    #create the variable "shrtName" used to name the output
+    fcName = os.path.basename(input_fc)
+    int_name = os.path.splitext(fcName)[0]
+    bad_char = ["(",")","'",'"',"\\","/","*","#","&","+"]
+    for char in bad_char:
+        int_name = int_name.replace(char,"")
+    shrtName = int_name.replace(" ", "_")
+    shrtName = shrtName.replace("-", "_")
+    arcpy.AddMessage("\nInput Feature Class: "+shrtName)
 
-        #get path of specific standards fc based on input_fc shapetype
-        shapetype = arcpy.Describe(input_fc).shapeType.lower()
-        if shapetype == "point":
-            standards_match_fc = "Historic_Objects\\crobj_pt"
-        elif shapetype == "polyline":
-            standards_match_fc = "Historic_Objects\\crobj_ln"
-        elif shapetype == "polygon":
-            standards_match_fc = "Historic_Objects\\crobj_py"
-        else:
-            arcpy.AddError("\nInput feature class shape type is "+\
-                shapetype.upper()+".  Only POINT, POLYLINE, and POLYGON "\
-                "are supported by the NPS standards.")
-            return
+    #get path of specific standards fc based on input_fc shapetype
+    shapetype = arcpy.Describe(input_fc).shapeType.lower()
+    if shapetype == "point":
+        standards_match_fc = "Historic_Objects\\crobj_pt"
+    elif shapetype == "polyline":
+        standards_match_fc = "Historic_Objects\\crobj_ln"
+    elif shapetype == "polygon":
+        standards_match_fc = "Historic_Objects\\crobj_py"
+    else:
+        arcpy.AddError("\nInput feature class shape type is "+\
+            shapetype.upper()+".  Only POINT, POLYLINE, and POLYGON "\
+            "are supported by the NPS standards.")
+        return
 
-        standards_match_gdb = GDBstandard
-        standards_match = os.path.join(standards_match_gdb,standards_match_fc)
+    standards_match_gdb = GDBstandard
+    standards_match = os.path.join(standards_match_gdb,standards_match_fc)
 
-        #name and create log file
-        cli_dir = os.path.dirname(gdb_path)
-        log_dir = cli_dir + "\\logs"
-        if not os.path.isdir(log_dir):
-            os.makedirs(log_dir)
-        log_file = log_dir + "\\ImportToScratchGDB Results " +\
-                   time.strftime("%m-%d-%Y %Hh %Mm %Ss") + ".txt" 
-        log = open(log_file, "a")
+    #name and create log file
+    cli_dir = os.path.dirname(gdb_path)
+    log_dir = cli_dir + "\\logs"
+    if not os.path.isdir(log_dir):
+        os.makedirs(log_dir)
+    log_file = log_dir + "\\ImportToScratchGDB Results " +\
+               time.strftime("%m-%d-%Y %Hh %Mm %Ss") + ".txt" 
+    log = open(log_file, "a")
 
-        arcpy.AddMessage("\ntool results stored in log file:\n" + log_file +\
-                         "\n\n----------\n")
-        print >> log, "Results of \"Import to Standards GDB\""\
-              "\n\nStart Time: " + time.strftime("%H:%M:%S") + "\n\n----------\n"
+    arcpy.AddMessage("\ntool results stored in log file:\n" + log_file +\
+                     "\n\n----------\n")
+    print >> log, "Results of \"Import to Standards GDB\""\
+          "\n\nStart Time: " + time.strftime("%H:%M:%S") + "\n\n----------\n"
+    
+    #create all new domains if necessary
+    domains = arcpy.Describe(gdb_path).domains
+
+    #dictionary of new domains and their values
+    new_domain_dict = {
+    "LAND_CHAR":["Archeological Sites", "Boundary", "Buildings and Structures",
+               "Circulation", "Cluster Arrangement", "Constructed Water Features",
+               "Cultural Traditions", "Land Use", "Natural Systems and Features",
+               "Small-Scale Features", "Spatial Organization", "Topography",
+               "Vegetation", "Views and Vistas"],
+    "fclass_pt":["crsite_pt", "crothr_pt", "crbldg_pt",
+                  "crstru_pt", "crobj_pt","crsurv_pt", "crethn_pt"],
+    "fclass_ln":["crsite_ln", "crothr_ln", "crstru_ln",
+                  "crobj_ln", "crsurv_ln", "crethn_ln"],
+    "fclass_py":["crsite_py", "crothr_py", "crbldg_py",
+                  "crstru_py", "crobj_py", "crsurv_py",
+                  "crethn_py", "crdist_py"],
+    "BND_TYPEpt":["Center point","Derived point","Random point","Vicinity point",
+                  "Vicinity point","Other point"],
+    "BND_TYPEln":["Center line","Derived line","Edge line","Perimeter line",
+                  "Random line","Other line"],
+    "BND_TYPEpy":["Buffer polygon","Circumscribed polygon","Derived polygon",
+                  "Perimeter polygon","Other polygon"]
+                  }
+    
+    #make new domains if necessary
+    for k,v in new_domain_dict.iteritems():
+        if not k in domains:
+            arcpy.management.CreateDomain(gdb_path,k,k, "TEXT", "CODED", "", "")
+            for dval in v:
+                arcpy.management.AddCodedValueToDomain(gdb_path,k, dval, dval)
+    del domains
+
+    #temporary fc used to merge
+    intermediate = r"in_memory\import_tmp"
+    TakeOutTrash(intermediate)
+    
+    #clip if clip feature is provided
+    if clip_features:
+        clip_int = r"in_memory\import_clip"
+        TakeOutTrash(clip_int)
+        arcpy.analysis.Clip(input_fc, clip_features, clip_int, "1 meter")
+        input_fc = clip_int
+        Print3("Input dataset clipped to input:",log)
+
+    ## cache dir definition/creation should be refactored to settings
+    ## but it's here for now..
+    cache_dir = os.path.join(settings['cli-gis-directory'],'_cache')
+    if not os.path.isdir(cache_dir):
+        os.makedirs(cache_dir)
+    ## transformation should also be refactored back to settings,
+    ## not hard-coded here and wherever else it is used.
+    transformation = "NAD_1983_To_WGS_1984_1"
         
-        #create all new domains if necessary
-        domains = arcpy.Describe(gdb_path).domains
+    # project input dataset to WGS84 (this should happen by default)
+    in_sr = arcpy.Describe(input_fc).spatialReference
+    if in_sr.name == "GCS_WGS_1984":
+        arcpy.AddMessage("input dataset is already in GCS WGS84, "\
+            "no reprojection needed.\n")
+    elif keep_native:
+        arcpy.AddMessage("keeping native spatial reference:\n{}\n".format(in_sr.name))
+    else:
+        arcpy.AddMessage("projecting input dataset to WGS 84, using "\
+                        "transformation: "+transformation+"\n")
+        proj_int = os.path.join(os.path.join(cache_dir,"import_wsg84.shp"))
+        TakeOutTrash(proj_int)
+        arcpy.management.Project(input_fc,proj_int,WGS84prj,transformation)
+        input_fc = proj_int
 
-        #dictionary of new domains and their values
-        new_domain_dict = {
-        "LAND_CHAR":["Archeological Sites", "Boundary", "Buildings and Structures",
-                   "Circulation", "Cluster Arrangement", "Constructed Water Features",
-                   "Cultural Traditions", "Land Use", "Natural Systems and Features",
-                   "Small-Scale Features", "Spatial Organization", "Topography",
-                   "Vegetation", "Views and Vistas"],
-        "fclass_pt":["crsite_pt", "crothr_pt", "crbldg_pt",
-                      "crstru_pt", "crobj_pt","crsurv_pt", "crethn_pt"],
-        "fclass_ln":["crsite_ln", "crothr_ln", "crstru_ln",
-                      "crobj_ln", "crsurv_ln", "crethn_ln"],
-        "fclass_py":["crsite_py", "crothr_py", "crbldg_py",
-                      "crstru_py", "crobj_py", "crsurv_py",
-                      "crethn_py", "crdist_py"],
-        "BND_TYPEpt":["Center point","Derived point","Random point","Vicinity point",
-                      "Vicinity point","Other point"],
-        "BND_TYPEln":["Center line","Derived line","Edge line","Perimeter line",
-                      "Random line","Other line"],
-        "BND_TYPEpy":["Buffer polygon","Circumscribed polygon","Derived polygon",
-                      "Perimeter polygon","Other polygon"]
-                      }
-        
-        #make new domains if necessary
-        for k,v in new_domain_dict.iteritems():
-            if not k in domains:
-                arcpy.management.CreateDomain(gdb_path,k,k, "TEXT", "CODED", "", "")
-                for dval in v:
-                    arcpy.management.AddCodedValueToDomain(gdb_path,k, dval, dval)
-        del domains
+    arcpy.management.CopyFeatures(input_fc, intermediate)
+    Print3("Input dataset copied:",log)
+    
+    # TakeOutTrash(clip_int)
+    # TakeOutTrash(proj_int)
 
-        #temporary fc used to merge
-        intermediate = r"in_memory\temp_CLIP"
-        TakeOutTrash(intermediate)
+    ct1 = int(arcpy.management.GetCount(intermediate).getOutput(0))
+    ct2 = int(arcpy.management.GetCount(input_fc).getOutput(0))
+    Print3("{0} feature{1} in the original feature layer, {2} will be "\
+        "added to the scratch geodatabase.".format(
+            str(ct2),"" if ct2==1 else "s",str(ct1)),log)
 
-        #clip if clip feature is provided
-        if clip_features == '':
-            arcpy.management.CopyFeatures(input_fc, intermediate)
-            Print3("Input dataset copied:",log)
-        else:
-            arcpy.analysis.Clip(input_fc, clip_features, intermediate, "1 meter")
-            Print3("Input dataset clipped to input:",log)
+    #MERGE WITH BLANK STANDARDS FEATURE CLASS
 
-        ct1 = int(arcpy.management.GetCount(intermediate).getOutput(0))
-        ct2 = int(arcpy.management.GetCount(input_fc).getOutput(0))
-        Print3("{0} feature{1} in the original feature layer, {2} will be "\
-            "added to the scratch geodatabase.".format(
-                str(ct2),"" if ct2==1 else "s",str(ct1)),log)
+    #check to see if any of the fields that will be added in the merge
+    #process already exist in the input feature dataset.  If one does
+    #exist, it will cause a problem.
+    Print3("\nFIELD MAPPING DETAILS:\nmaking sure no original field names"\
+        " will cause problems...",log)
+    info_printed = False
+    
+    a = arcpy.ListFields(intermediate)
+    bfields = ["OBJECTID","FID"]
+    int_fields = [f for f in a if not f.required and not f.name in bfields]
+    stan_fields = arcpy.ListFields(standards_match)      
 
-        #MERGE WITH BLANK STANDARDS FEATURE CLASS
+    dropFields = []
 
-        #check to see if any of the fields that will be added in the merge
-        #process already exist in the input feature dataset.  If one does
-        #exist, it will cause a problem.
-        Print3("\nFIELD MAPPING DETAILS:\nmaking sure no original field names"\
-            " will cause problems...",log)
-        info_printed = False
-        
-        a = arcpy.ListFields(intermediate)
-        bfields = ["OBJECTID","FID"]
-        int_fields = [f for f in a if not f.required and not f.name in bfields]
-        stan_fields = arcpy.ListFields(standards_match)      
+    for intf in int_fields:
+        fname = intf.name
+        ftype = intf.type
+        flen = intf.length
 
-        dropFields = []
+        for stanf in stan_fields:
+            sfname = stanf.name
+            sftype = stanf.type
+            sflen = stanf.length
 
-        for intf in int_fields:
-            fname = intf.name
-            ftype = intf.type
-            flen = intf.length
-
-            for stanf in stan_fields:
-                sfname = stanf.name
-                sftype = stanf.type
-                sflen = stanf.length
-
-                if fname != sfname:
-                    break
-                elif ftype == sftype and flen <= sflen:
-                    Print3("-- Values from field {0} will be carried over from "\
-                          "original dataset".format(fname),log)
-                    info_printed = True
-                    break
-                else:
-                    usename = fname + "_OLD"
-                    counter = 1
-                    while not usename in [i.name for i in int_fields]:
-                        usename = fname + "_OLD" + str(counter)
-                        counter+=1
-                    arcpy.management.AddField(intermediate, usename, ftype)
-                    info_printed = True
-                    try:
-                        arcpy.management.CalculateField(intermediate,
-                            usename,'[' + fname + ']')
-                        Print3("-- Values from field {0} were transferred to new "\
-                               "field {1}".format(fname,usename),log)
-                    except:
-                        Print3("-- There was an error while transferring values "\
-                               "from field {0} to new field {1}".format(
-                                   fname,usename),log)
-                    dropFields.append(fname)
-
-        if not info_printed:
-            Print3("  no field mapping required",log)
-                
-        #merge newly created temporary file with selected standards fc
-        output_dataset = os.path.join(gdb_path,"imp_" + shrtName)
-        TakeOutTrash(output_dataset)
-        arcpy.management.Merge([intermediate, standards_match], output_dataset)
-        Print3("\nnew feature class named \"imp_" + shrtName + "\".",log)
-
-        #ADD FIELDS/ASSIGN DOMAINS, IF NECESSARY:
-        shapetype = arcpy.Describe(output_dataset).shapeType.lower()
-
-        #remove domain from bndtype field and assign all inclusive bnd_type domain
-        arcpy.management.RemoveDomainFromField(output_dataset,"BND_TYPE")
-        if shapetype == "point":
-            arcpy.management.AssignDomainToField(
-                output_dataset,"BND_TYPE","BND_TYPEpt")
-        if shapetype == "polyline":
-            arcpy.management.AssignDomainToField(
-                output_dataset,"BND_TYPE","BND_TYPEln")
-        if shapetype == "polygon":
-            arcpy.management.AssignDomainToField(
-                output_dataset,"BND_TYPE","BND_TYPEpy")
-        
-        #"fclass" field used to sort each record into the appropriate standards fc
-        #and assign appropriate domain, depending on shape type
-        f_names = [f.name.upper() for f in arcpy.ListFields(output_dataset)]
-        
-        shape_dict = {"point":"fclass_pt",
-                      "polyline":"fclass_ln",
-                      "polygon":"fclass_py"}
-        for shape, domain in shape_dict.iteritems():
-            if shape == shapetype:
-                if not "FCLASS" in f_names:
-                    arcpy.management.AddField(
-                        output_dataset, "fclass","TEXT","","",50,"","","",domain)
-                    Print3("New field \"fclass\" has been added "\
-                        "and domain \"" + domain + "\" has been assigned to it.\n",log)
-                else:
-                    arcpy.management.AssignDomainToField(
-                        output_dataset,"fclass",domain)
-                            
-        ## update attributes based on input variable dictionary
-        arcpy.AddMessage("\n...populating fields based on user input:\n")
-
-        ## print summary
-        keys = variable_dictionary.keys()
-        keys.sort()
-        for k in keys:
-            if variable_dictionary[k] == "":
-                continue
-            Print3("{0} = {1}".format(k,variable_dictionary[k]),log)
-     
-        ## make list of fields for update cursor
-        all_input_fields = [i for i,v in variable_dictionary.iteritems() if (not\
-                                v.startswith("code: ") and not v == '')]
-        reduced_fields = [i for i in all_input_fields if i.upper() in f_names]
-
-        for fi in arcpy.ListFields(output_dataset):
-            if fi.name == "OBJECTID" and fi.required:
-                oidfield = "OBJECTID"
-            elif fi.name == "OBJECTID_1" and fi.required:
-                oidfield = "OBJECTID_1"
+            if fname != sfname:
+                break
+            elif ftype == sftype and flen <= sflen:
+                Print3("-- Values from field {0} will be carried over from "\
+                      "original dataset".format(fname),log)
+                info_printed = True
+                break
             else:
-                pass
-        reduced_fields.insert(0,oidfield)
-
-        urows = arcpy.da.UpdateCursor(output_dataset,reduced_fields)
-        for urow in urows:
-            OID = urow[0]
-            for index in range(1,len(reduced_fields)):
-                urow[index] = variable_dictionary[reduced_fields[index]]
-            try:
-                urows.updateRow(urow)
-            except:
-                arcpy.AddWarning("  in field: " + reduced_fields[index])
-                arcpy.AddWarning("    problem updating OID: " + str(OID))
-        del urows
-
-        #calculate any fields that had a "code: " value entered
-        arcpy.AddMessage(" ")
-        for field, value in variable_dictionary.iteritems():
-            if value[:6] == "code: ":
-                exp = value[6:]
-                arcpy.AddMessage("using field calculator to interpret input for "+field)
-                arcpy.AddMessage("  "+value)
+                usename = fname + "_OLD"
+                counter = 1
+                while not usename in [i.name for i in int_fields]:
+                    usename = fname + "_OLD" + str(counter)
+                    counter+=1
+                arcpy.management.AddField(intermediate, usename, ftype)
+                info_printed = True
                 try:
-                    arcpy.management.CalculateField(output_dataset, field,
-                                                exp, "PYTHON")
+                    arcpy.management.CalculateField(intermediate,
+                        usename,'[' + fname + ']')
+                    Print3("-- Values from field {0} were transferred to new "\
+                           "field {1}".format(fname,usename),log)
                 except:
-                    Print3("New values for " + field + " were not " +\
-                            "calculated correctly. Expression entered was:\n"\
-                               + exp + "\n\nRemember, the expression will be "\
-                               "parsed as Python.",log)
+                    Print3("-- There was an error while transferring values "\
+                           "from field {0} to new field {1}".format(
+                               fname,usename),log)
+                dropFields.append(fname)
 
-        #delete intermediate clip fc
-        TakeOutTrash(intermediate)
+    if not info_printed:
+        Print3("  no field mapping required",log)
+            
+    #merge newly created temporary file with selected standards fc
+    output_dataset = os.path.join(gdb_path,"imp_" + shrtName)
+    TakeOutTrash(output_dataset)
+    arcpy.management.Merge([intermediate, standards_match], output_dataset)
+    Print3("\nnew feature class named \"imp_" + shrtName + "\".",log)
 
-        log.close()
+    #ADD FIELDS/ASSIGN DOMAINS, IF NECESSARY:
+    shapetype = arcpy.Describe(output_dataset).shapeType.lower()
 
-    except:
+    #remove domain from bndtype field and assign all inclusive bnd_type domain
+    arcpy.management.RemoveDomainFromField(output_dataset,"BND_TYPE")
+    if shapetype == "point":
+        arcpy.management.AssignDomainToField(
+            output_dataset,"BND_TYPE","BND_TYPEpt")
+    if shapetype == "polyline":
+        arcpy.management.AssignDomainToField(
+            output_dataset,"BND_TYPE","BND_TYPEln")
+    if shapetype == "polygon":
+        arcpy.management.AssignDomainToField(
+            output_dataset,"BND_TYPE","BND_TYPEpy")
+    
+    #"fclass" field used to sort each record into the appropriate standards fc
+    #and assign appropriate domain, depending on shape type
+    f_names = [f.name.upper() for f in arcpy.ListFields(output_dataset)]
+    
+    shape_dict = {"point":"fclass_pt",
+                  "polyline":"fclass_ln",
+                  "polygon":"fclass_py"}
+    for shape, domain in shape_dict.iteritems():
+        if shape == shapetype:
+            if not "FCLASS" in f_names:
+                arcpy.management.AddField(
+                    output_dataset, "fclass","TEXT","","",50,"","","",domain)
+                Print3("New field \"fclass\" has been added "\
+                    "and domain \"" + domain + "\" has been assigned to it.\n",log)
+            else:
+                arcpy.management.AssignDomainToField(
+                    output_dataset,"fclass",domain)
+                        
+    ## update attributes based on input variable dictionary
+    arcpy.AddMessage("\n...populating fields based on user input:\n")
 
-        tb = sys.exc_info()[2]
-        tbinfo = traceback.format_tb(tb)[0]
-        pymsg = "PYTHON ERRORS:\nTraceback Info:\n" + tbinfo + "\nError Info:\n     "\
-                + str(sys.exc_type) + ": " + str(sys.exc_value) + "\n"
-        msgs = "ARCPY ERRORS:\n" + arcpy.GetMessages(2) + "\n"
+    ## print summary
+    keys = variable_dictionary.keys()
+    keys.sort()
+    for k in keys:
+        if variable_dictionary[k] == "":
+            continue
+        Print3("{0} = {1}".format(k,variable_dictionary[k]),log)
+ 
+    ## make list of fields for update cursor
+    all_input_fields = [i for i,v in variable_dictionary.iteritems() if (not\
+                            v.startswith("code: ") and not v == '')]
+    reduced_fields = [i for i in all_input_fields if i.upper() in f_names]
 
-        arcpy.AddMessage(msgs)
-        arcpy.AddMessage(pymsg)
-        arcpy.AddMessage(arcpy.GetMessages(1))
+    for fi in arcpy.ListFields(output_dataset):
+        if fi.name == "OBJECTID" and fi.required:
+            oidfield = "OBJECTID"
+        elif fi.name == "OBJECTID_1" and fi.required:
+            oidfield = "OBJECTID_1"
+        else:
+            pass
+    reduced_fields.insert(0,oidfield)
 
-        log.close()
+    urows = arcpy.da.UpdateCursor(output_dataset,reduced_fields)
+    for urow in urows:
+        OID = urow[0]
+        for index in range(1,len(reduced_fields)):
+            urow[index] = variable_dictionary[reduced_fields[index]]
+        try:
+            urows.updateRow(urow)
+        except:
+            arcpy.AddWarning("  in field: " + reduced_fields[index])
+            arcpy.AddWarning("    problem updating OID: " + str(OID))
+    del urows
+
+    #calculate any fields that had a "code: " value entered
+    arcpy.AddMessage(" ")
+    for field, value in variable_dictionary.iteritems():
+        if value[:6] == "code: ":
+            exp = value[6:]
+            arcpy.AddMessage("using field calculator to interpret input for "+field)
+            arcpy.AddMessage("  "+value)
+            try:
+                arcpy.management.CalculateField(output_dataset, field,
+                                            exp, "PYTHON")
+            except:
+                Print3("New values for " + field + " were not " +\
+                        "calculated correctly. Expression entered was:\n"\
+                           + exp + "\n\nRemember, the expression will be "\
+                           "parsed as Python.",log)
+
+    #delete intermediate clip fc
+    TakeOutTrash(intermediate)
+
+    log.close()
+
+    # except:
+
+        # tb = sys.exc_info()[2]
+        # tbinfo = traceback.format_tb(tb)[0]
+        # pymsg = "PYTHON ERRORS:\nTraceback Info:\n" + tbinfo + "\nError Info:\n     "\
+                # + str(sys.exc_type) + ": " + str(sys.exc_value) + "\n"
+        # msgs = "ARCPY ERRORS:\n" + arcpy.GetMessages(2) + "\n"
+
+        # arcpy.AddMessage(msgs)
+        # arcpy.AddMessage(pymsg)
+        # arcpy.AddMessage(arcpy.GetMessages(1))
+
+        # log.close()
 
 def MergeCRLinkTables(input_table,target_table):
     """ Merges two CR Link tables, and makes sure that no progam IDs

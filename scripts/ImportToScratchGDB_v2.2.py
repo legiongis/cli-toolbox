@@ -19,51 +19,52 @@ from clitools.management import ImportToScratchGDB
 input_fc = arcpy.GetParameterAsText(0)
 target_gdb = arcpy.GetParameterAsText(1)
 clip_fc = arcpy.GetParameterAsText(2)
+keep_native = arcpy.GetParameter(3)
 
 #1. get source info from parameters
-SOURCE = arcpy.GetParameterAsText(5)
-SRC_DATE = arcpy.GetParameterAsText(6)
-SRC_ACCU = arcpy.GetParameterAsText(7)
-SRC_SCALE = arcpy.GetParameterAsText(8)
-SRC_COORD = arcpy.GetParameterAsText(9)
-VERT_ERROR = arcpy.GetParameterAsText(10)
-META_MIDF = arcpy.GetParameterAsText(11)
+SOURCE = arcpy.GetParameterAsText(6)
+SRC_DATE = arcpy.GetParameterAsText(7)
+SRC_ACCU = arcpy.GetParameterAsText(8)
+SRC_SCALE = arcpy.GetParameterAsText(9)
+SRC_COORD = arcpy.GetParameterAsText(10)
+VERT_ERROR = arcpy.GetParameterAsText(11)
+META_MIDF = arcpy.GetParameterAsText(12)
 
 #2. get creation info
-MAP_METHOD = arcpy.GetParameterAsText(13)
-MAP_MTH_OT = arcpy.GetParameterAsText(14)
-BND_TYPE = arcpy.GetParameterAsText(15)
-BND_OTHER = arcpy.GetParameterAsText(16)
-CREATEDATE = arcpy.GetParameterAsText(17)
-EDIT_DATE = arcpy.GetParameterAsText(18)
-EDIT_BY = arcpy.GetParameterAsText(19)
-ORIGINATOR = arcpy.GetParameterAsText(20)
-CONSTRANT = arcpy.GetParameterAsText(21)
+MAP_METHOD = arcpy.GetParameterAsText(14)
+MAP_MTH_OT = arcpy.GetParameterAsText(15)
+BND_TYPE = arcpy.GetParameterAsText(16)
+BND_OTHER = arcpy.GetParameterAsText(17)
+CREATEDATE = arcpy.GetParameterAsText(18)
+EDIT_DATE = arcpy.GetParameterAsText(19)
+EDIT_BY = arcpy.GetParameterAsText(20)
+ORIGINATOR = arcpy.GetParameterAsText(21)
+CONSTRANT = arcpy.GetParameterAsText(22)
 
 #3. get resource info
-RESNAME = arcpy.GetParameterAsText(22)
-RESTRICT_ = arcpy.GetParameterAsText(23)
-CONTRIBRES = arcpy.GetParameterAsText(24)
-IS_EXTANT = arcpy.GetParameterAsText(25)
-EXTANT_OTH = arcpy.GetParameterAsText(26)
-CR_NOTES = arcpy.GetParameterAsText(27)
+RESNAME = arcpy.GetParameterAsText(23)
+RESTRICT_ = arcpy.GetParameterAsText(24)
+CONTRIBRES = arcpy.GetParameterAsText(25)
+IS_EXTANT = arcpy.GetParameterAsText(26)
+EXTANT_OTH = arcpy.GetParameterAsText(27)
+CR_NOTES = arcpy.GetParameterAsText(28)
 
-Program_Collection = arcpy.GetParameterAsText(28)
-fclass = arcpy.GetParameterAsText(29)
+Program_Collection = arcpy.GetParameterAsText(29)
+fclass = arcpy.GetParameterAsText(30)
 
 #4. get CLI info
-CLI_ID = arcpy.GetParameterAsText(30)
-CLI_NUM = arcpy.GetParameterAsText(31)
-LAND_CHAR = arcpy.GetParameterAsText(32)
+CLI_ID = arcpy.GetParameterAsText(31)
+CLI_NUM = arcpy.GetParameterAsText(32)
+LAND_CHAR = arcpy.GetParameterAsText(33)
 
 #5. get location info
-ALPHA_CODE = arcpy.GetParameterAsText(33)
-UNIT = arcpy.GetParameterAsText(34)
-UNIT_CODEO = arcpy.GetParameterAsText(35)
-UNIT_OTHER = arcpy.GetParameterAsText(36)
-UNIT_TYPE = arcpy.GetParameterAsText(37)
-GROUP_CODE = arcpy.GetParameterAsText(38)
-REG_CODE = arcpy.GetParameterAsText(39)
+ALPHA_CODE = arcpy.GetParameterAsText(34)
+UNIT = arcpy.GetParameterAsText(35)
+UNIT_CODEO = arcpy.GetParameterAsText(36)
+UNIT_OTHER = arcpy.GetParameterAsText(37)
+UNIT_TYPE = arcpy.GetParameterAsText(38)
+GROUP_CODE = arcpy.GetParameterAsText(39)
+REG_CODE = arcpy.GetParameterAsText(40)
 
 var_dict = {
         "SOURCE":SOURCE,
@@ -102,5 +103,5 @@ var_dict = {
         "fclass":fclass
         }
 
-ImportToScratchGDB(input_fc,target_gdb,clip_fc,var_dict)
+ImportToScratchGDB(input_fc,target_gdb,clip_fc,var_dict,keep_native=keep_native)
 
