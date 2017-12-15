@@ -907,24 +907,36 @@ def ImportToScratchGDB(input_fc,gdb_path,clip_features='',
     cache_dir = os.path.join(settings['cli-gis-directory'],'_cache')
     if not os.path.isdir(cache_dir):
         os.makedirs(cache_dir)
-    ## transformation should also be refactored back to settings,
-    ## not hard-coded here and wherever else it is used.
-    transformation = "NAD_1983_To_WGS_1984_1"
         
     # project input dataset to WGS84 (this should happen by default)
-    in_sr = arcpy.Describe(input_fc).spatialReference
-    if in_sr.name == "GCS_WGS_1984":
-        arcpy.AddMessage("input dataset is already in GCS WGS84, "\
-            "no reprojection needed.\n")
-    elif keep_native:
+    def get_trans(in_sr_name):
+        if "1927" in in_sr_name:
+            trans = settings['trans-nad27-wgs84']
+        elif "1983" in in_sr_name:
+            trans = settings['trans-nad83-wgs84']
+        elif "1984" in in_sr_name:
+            return False
+        else:
+            arcpy.AddError("problem finding transformation between "\
+                "these geographic coordinate systems. try manually "\
+                "projecting this dataset to a NAD83- or WGS84-based spatial "\
+                "reference, and rerun this tool.\n")
+            
+    if keep_native:
         arcpy.AddMessage("keeping native spatial reference:\n{}\n".format(in_sr.name))
     else:
-        arcpy.AddMessage("projecting input dataset to WGS 84, using "\
-                        "transformation: "+transformation+"\n")
-        proj_int = os.path.join(os.path.join(cache_dir,"import_wsg84.shp"))
-        TakeOutTrash(proj_int)
-        arcpy.management.Project(input_fc,proj_int,WGS84prj,transformation)
-        input_fc = proj_int
+        in_sr = arcpy.Describe(input_fc).spatialReference
+        trans = get_trans(in_sr.name)
+        if trans:
+            arcpy.AddMessage("projecting input dataset to WGS 84, using "\
+                            "transformation: "+trans+"\n")
+            proj_int = os.path.join(os.path.join(cache_dir,"import_wsg84.shp"))
+            TakeOutTrash(proj_int)
+            arcpy.management.Project(input_fc,proj_int,WGS84prj,trans)
+            input_fc = proj_int
+        else:
+            arcpy.AddMessage("input dataset is already in GCS WGS84, "\
+                "no reprojection needed.\n")
 
     arcpy.management.CopyFeatures(input_fc, intermediate)
     Print3("Input dataset copied:",log)
@@ -1192,8 +1204,9 @@ def ProjectGDBtoNAD83(geodatabase,gdbtype,transformation):
         if not f.endswith(".lock"):
             shutil.copy2(os.path.join(WGS84_gdb,f), new_NAD83_gdb)
 
+    trans = settings['trans-nad83-wgs84']
     arcpy.AddMessage("\nOutput geodatabase: "+new_NAD83_gdb)
-    arcpy.AddMessage("\nTransformation used: NAD_1983_To_WGS_1984_1")
+    arcpy.AddMessage("\nTransformation used: "+trans)
 
 
     a83paths = MakePathList(geodatabase,True)
@@ -1218,7 +1231,7 @@ def ProjectGDBtoNAD83(geodatabase,gdbtype,transformation):
         ## project to temporary shapefile in the CLI_GIS directory
         temp = r"{0}\temp.shp".format(settings['cli-gis-directory'])
         TakeOutTrash(temp)
-        arcpy.management.Project(path,temp,wgs84,"NAD_1983_To_WGS_1984_1")
+        arcpy.management.Project(path,temp,wgs84,trans)
         arcpy.AddMessage("  projected to WGS84")
         
         ## append to appropriate feature class
@@ -1455,9 +1468,9 @@ def StandardsToWGS84(geodatabase):
         if not f.endswith(".lock"):
             shutil.copy2(os.path.join(WGS84_gdb,f), new_WGS84_gdb)
 
+    trans = settings['trans-nad83-wgs84']
     arcpy.AddMessage("\nOutput geodatabase: "+new_WGS84_gdb)
-    arcpy.AddMessage("\nTransformation used: NAD_1983_To_WGS_1984_1")
-
+    arcpy.AddMessage("\nTransformation used: "+trans)
 
     a83paths = MakePathList(geodatabase,True)
     a84paths = MakePathList(new_WGS84_gdb,True)
@@ -1482,7 +1495,7 @@ def StandardsToWGS84(geodatabase):
         drive_letter = geodatabase[0]
         temp = r"{0}\temp.shp".format(settings['cli-gis-directory'])
         TakeOutTrash(temp)
-        arcpy.management.Project(path,temp,wgs84,"NAD_1983_To_WGS_1984_1")
+        arcpy.management.Project(path,temp,wgs84,trans)
         arcpy.AddMessage("  projected to WGS84")
         
         ## append to appropriate feature class
