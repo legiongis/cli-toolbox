@@ -15,8 +15,8 @@ settings['default-map-method'] = arcpy.GetParameterAsText(4)
 settings['default-originator'] = arcpy.GetParameterAsText(5)
 settings['default-constraint'] = arcpy.GetParameterAsText(6)
 settings['default-program-collection'] = arcpy.GetParameterAsText(7)
-settings['trans-nad27-wsg84'] =  arcpy.GetParameterAsText(8)
-settings['trans-nad83-wsg84'] =  arcpy.GetParameterAsText(9)
+settings['trans-nad83-wsg84'] =  arcpy.GetParameterAsText(8)
+settings['trans-nad27-wsg84'] =  arcpy.GetParameterAsText(9)
 
 if not os.path.isdir(settings['cli-gis-directory']):
     try:
