@@ -1062,6 +1062,11 @@ def CREnterpriseMultipleXLS(map_document,input_code,output_dir):
 
     ## check for tables in map document
     tables = CheckForEnterpriseTables(map_document)
+    
+    arcpy.AddMessage("tables found:")
+    for t in tables:
+        arcpy.AddMessage(table)
+        
     if not tables:
         return False
     else:
@@ -1094,8 +1099,12 @@ def CREnterpriseMultipleXLS(map_document,input_code,output_dir):
     arcpy.AddMessage("Output file: {0}".format(new_xls))
 
     ## get full list of landscapes in the park or region
+    arcpy.AddMessage("starting select by attribute process")
+    arcpy.AddMessage("  using cli_table")
     arcpy.management.SelectLayerByAttribute(cli_table,"NEW_SELECTION",query)
+    arcpy.AddMessage("selection completed")
     ct = int(arcpy.management.GetCount(cli_table).getOutput(0))
+    arcpy.AddMessage(str(ct))
     if ct == 0:
         arcpy.AddError("\nNo landscapes found in CLI Feature Table matching "\
             "this query.\n")
