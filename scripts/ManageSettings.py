@@ -2,9 +2,8 @@ import os
 import json
 import arcpy
 
-try:
-    from clitools.config import settings
-except:
+from clitools.config import settings
+if not settings:
     settings = {}
 
 settings['toolbox-location'] = arcpy.GetParameterAsText(0)
