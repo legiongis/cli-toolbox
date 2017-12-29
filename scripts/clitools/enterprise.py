@@ -602,6 +602,10 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
             arcpy.AddError("\nThis input code is invalid.  Double check and try "\
                 "again.\n")
             return False
+        
+        log.debug("now inside enterprise.ExtractFromEnterpriseQuery")
+        log.debug("tbl_query:" + tbl_query)
+        log.debug("qry_lvl:" + qry_lvl)
 
         ## check for tables
         tables = CheckForEnterpriseTables(map_document)
@@ -611,6 +615,10 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
             cli_table = tables[0]
             cr_link_table = tables[1]
             cr_catalog = tables[2]
+            
+        log.debug("cli_table:" + tables[0])
+        log.debug("cr_link_table:" + tables[1])
+        log.debug("cr_catalog:" + tables[2])
 
         ## print query
         arcpy.AddMessage("\nQuery Used: {0}".format(tbl_query))
@@ -635,14 +643,15 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         while os.path.isdir(new_name+ ".gdb"):
             new_name = new_gdb+"_"+str(r)
             r+=1
-
+            
         ## copy template over to new geodatabase
         new_gdb = new_name + ".gdb"
         os.makedirs(new_gdb)
         for f in os.listdir(blank_gdb):
             if not f.endswith(".lock"):
                 shutil.copy2(os.path.join(blank_gdb,f), new_gdb)
-
+                
+        log.debug("output gdb: "+new_gdb)
         arcpy.AddMessage("\nOutput Geodatabase:\n{0}".format(new_gdb))
 
         ## make path list for all potential destination feature classes in new gdb
@@ -650,11 +659,19 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         
         ## get set of cli_ids and info from the feature table
         arcpy.AddMessage("\nGetting list of CLI_IDs matching query...")
-        fields = ["CLI_ID","CLI_NUM","LAND_CHAR","ALPHA_CODE",
-                    "REGION_CODE","RESNAME"]
+        log.debug("getting list of cli_ids matching query")
+        log.debug(cli_table+" "+tbl_query)
+        log.debug("fields in cli_table: "+",".join(arcpy.ListFields(cli_table)))
+        
         id_dict = {}
         arcpy.management.SelectLayerByAttribute(cli_table,"NEW_SELECTION",
             tbl_query)
+            
+        log.debug("selection made")
+            
+        fields = ["CLI_ID","CLI_NUM","LAND_CHAR","ALPHA_CODE",
+                    "REGION_CODE","RESNAME"]
+        log.debug("query fields: "+",".join(fields))
         with arcpy.da.SearchCursor(cli_table,fields) as cursor:
             for row in cursor:
                 if not row[0] in id_dict.keys():
@@ -668,19 +685,27 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         n = len(id_list)
         arcpy.AddMessage("    {0} CLI_ID{1} found".format(
             n,'' if n == 1 else 's'))
+        log.debug("cli_ids found: "+str(n))
 
         arcpy.AddMessage("\n---DOWNLOADING TABULAR DATA---\n")
+        log.debug("DOWNLOADING TABULAR DATA")
 
         ## download CR Link table new gdb table
         arcpy.AddMessage("CR Link")
         new_cr_link = os.path.join(new_gdb,"CR_Link")
         cli_id_qry = '"CLI_ID" IN (\'{0}\')'.format("','".join(id_list))
+        log.debug("cli_id_qry: "+cli_id_qry)
+        log.debug(len(cli_id_qry))
+        log.debug("selecting from the cr link table based on cli_id_query")
         arcpy.management.SelectLayerByAttribute(cr_link_table,"NEW_SELECTION",
             cli_id_qry)
+        log.debug("selection made. appending cr_link_table to new_cr_link table.")
         arcpy.management.Append(cr_link_table,new_cr_link,"NO_TEST")
+        log.debug("append completed")
         ct = int(arcpy.management.GetCount(new_cr_link).getOutput(0))
         arcpy.AddMessage("    {0} row{1} exported".format(ct,
             "" if ct == 1 else "s"))
+        log.debug("append completed")
 
         ## add CLI information to records in CR Link with CLI_ID
         arcpy.AddMessage("    writing CLI_NUM and LAND_CHAR values to CR Link")

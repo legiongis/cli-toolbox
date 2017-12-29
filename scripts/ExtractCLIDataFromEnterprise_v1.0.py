@@ -13,6 +13,12 @@ import arcpy
 import os
 from clitools.enterprise import ExtractFromEnterpriseSelection
 from clitools.enterprise import ExtractFromEnterpriseQuery
+from clitools.general import StartLog
+
+## start logging messages now
+start = datetime.now()
+log = StartLog(level="DEBUG",name="ExtractCLIDataFromEnterprise")
+log.debug("starting extract")
 
 """this is a shell script that takes the arguments from the ArcMap tool
 dialog and passes them to the function in the clitools.management module."""
@@ -27,9 +33,11 @@ trans_type = arcpy.GetParameterAsText(5)
 try:
     mxd = arcpy.mapping.MapDocument("CURRENT")
 except:
-    arcpy.AddError("This tool must be run from ArcMap, "\
+    errmsg = "This tool must be run from ArcMap, "\
             "using the CR Enterprise Access document that is included "\
-            "in this toolbox folder.")
+            "in this toolbox folder."
+    arcpy.AddError(errmsg)
+    log.error(errmsg)
 
 if len(in_code) == 3:
     query_code = in_code.upper()
@@ -40,9 +48,14 @@ elif len(in_code) == 6:
 else:
     query_code = False
 
+log.debug("extract method: "+extract_method)
+log.debug("query_code: "+str(query_code))
+
 if extract_method == "unit code" and not query_code == False:
     ExtractFromEnterpriseQuery(mxd,query_code,output_location,only_link,trans,trans_type)
 elif extract_method == "selected features":
     ExtractFromEnterpriseSelection(mxd,output_location,only_link,trans,trans_type)
 else:
     arcpy.AddError("\nInvalid query code.\n")
+
+log.debug("completed extract {}".format(datetime.now()-start))
