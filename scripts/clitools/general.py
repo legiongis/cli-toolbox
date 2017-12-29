@@ -22,8 +22,33 @@ import arcpy
 import time
 import os
 import shutil
+import logging
+# import logging.handlers
+from clitools.config import settings
 from paths import BinGDB
 
+def StartLog(level="INFO",name="output"):
+    ## remove any existing handlers
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+
+    if level=="DEBUG":
+        name+=time.strftime("_%m%d%y-%H%M%S")
+        
+    logpath = os.path.join(settings['log-dir'],name+".log")
+    logging.basicConfig(
+        filename=logpath,
+        format='%(asctime)s|%(levelname)s|%(message)s',
+        datefmt='%m-%d-%y %H:%M:%S',
+    )
+    
+    log = logging.getLogger()
+    log.setLevel(logging.getLevelName(level))
+    
+    arcpy.AddMessage("log level: {}".format(level))
+    arcpy.AddMessage("log file: {}".format(logpath))
+    return log
+    
 def Print(message,just_arcpy=False):
     '''This will print the input to the console and also pass the message to
     the arcpy.AddMessage() function. If the arcpy parameter is set to False,
