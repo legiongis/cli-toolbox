@@ -757,7 +757,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
 
         ## narrow down list of potential feature classes
         log_name = time.strftime("log_%b%d_%H%M")
-        log_dir = settings['cli-gis-directory']+os.sep+"logs"
+        log_dir = settings['log-dir']
         if not os.path.isdir(log_dir):
             os.makedirs(log_dir)
         log_path = r"{0}\{1}.txt".format(log_dir,log_name)
