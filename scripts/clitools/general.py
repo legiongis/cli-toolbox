@@ -40,11 +40,9 @@ def StartLog(level="INFO",name="output"):
         filename=logpath,
         format='%(asctime)s|%(levelname)s|%(message)s',
         datefmt='%m-%d-%y %H:%M:%S',
+        level=logging.getLevelName(level)
     )
-    
-    log = logging.getLogger()
-    log.setLevel(logging.getLevelName(level))
-    
+
     arcpy.AddMessage("log level: {}".format(level))
     arcpy.AddMessage("log file: {}".format(logpath))
     return log
