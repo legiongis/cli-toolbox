@@ -14,7 +14,7 @@ settings['default-edit-by'] = arcpy.GetParameterAsText(4)
 settings['default-map-method'] = arcpy.GetParameterAsText(5)
 settings['default-originator'] = arcpy.GetParameterAsText(6)
 settings['default-constraint'] = arcpy.GetParameterAsText(7)
-settings['default-program-collection'] = arcpy.GetParameterAsText(8)
+settings['default-program-collection'] = arcpy.GetParameterAsText(8).rstrip()
 settings['trans-nad83-wsg84'] =  arcpy.GetParameterAsText(9)
 settings['trans-nad27-wsg84'] =  arcpy.GetParameterAsText(10)
 
