@@ -23,7 +23,15 @@ Welcome to CLI Toolbox's documentation!
 
 Indices and tables
 ==================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Appendices:
+   
    AppendixA
+   AppendixB
+   AppendixC
+   AppendixD
 
 * :ref:`genindex`
 * :ref:`modindex`
