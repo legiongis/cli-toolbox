@@ -14,6 +14,7 @@ import os
 from clitools.enterprise import ExtractFromEnterpriseSelection
 from clitools.enterprise import ExtractFromEnterpriseQuery
 from clitools.general import StartLog
+from datetime import datetime
 
 ## start logging messages now
 start = datetime.now()
