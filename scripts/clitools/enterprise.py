@@ -38,6 +38,7 @@ import sys
 import traceback
 import time
 import xlrd
+import logging
 from clitools.config import settings
 
 from general import (
@@ -588,6 +589,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
     download the CR Link table for these records, if desired."""
 
     try:
+        log = logging.getLogger()
         ## make feature table queries based on input query code
         if len(query_code) == 3:
             tbl_query = '"REGION_CODE" = \''+query_code.upper()+"'"
@@ -906,6 +908,9 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         print msgs
         print pymsg
         print arcpy.GetMessages(1)
+        log.error(msgs)
+        log.error(pymsg)
+        log.error(arcpy.GetMessages(1))
         arcpy.AddError(msgs)
         arcpy.AddError(pymsg)
         arcpy.AddError(arcpy.GetMessages(1))
