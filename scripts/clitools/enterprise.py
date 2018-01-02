@@ -618,9 +618,12 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
             cr_link_table = tables[1]
             cr_catalog = tables[2]
             
-        log.debug("cli_table:" + tables[0])
-        log.debug("cr_link_table:" + tables[1])
-        log.debug("cr_catalog:" + tables[2])
+        log.debug("cli_table: " + str(tables[0]))
+        log.debug("fields: " + ",".join(arcpy.ListFields(tables[0]))
+        log.debug("cr_link_table: " + str(tables[1]))
+        log.debug("fields: " + ",".join(arcpy.ListFields(tables[1]))
+        log.debug("cr_catalog: " + str(tables[2]))
+        log.debug("fields: " + ",".join(arcpy.ListFields(tables[2]))
 
         ## print query
         arcpy.AddMessage("\nQuery Used: {0}".format(tbl_query))
