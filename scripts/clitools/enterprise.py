@@ -51,7 +51,7 @@ from general import (
 from paths import (
     GDBstandard,
     GDBstandard_link,
-	GDBstandard_WGS84,
+    GDBstandard_WGS84,
     NAD83prj,
     BinGDB,
     FeatureLookupTable,
@@ -400,8 +400,8 @@ def ExtractFromEnterpriseSelection(map_document,output_location,
                 arcpy.AddWarning("    there is no appropriate path match "\
                     "for this layer")
                 ss = time.time()-a
-            	sss = str(ss).split(".")[0]
-            	arcpy.AddMessage("      {0} seconds elapsed".format(sss))
+                sss = str(ss).split(".")[0]
+                arcpy.AddMessage("      {0} seconds elapsed".format(sss))
                 continue
 
             ## get cr ids from the layer
@@ -556,9 +556,9 @@ def ExtractFromEnterpriseSelection(map_document,output_location,
                     cinfo = cli_cr_dict[row[0]]
                     c = cinfo[0]
                     if c in cli_info.keys():
-                    	row[1] = c
+                        row[1] = c
                         row[2] = cli_info[c][0]
-                    	row[3] = cli_info[c][1]
+                        row[3] = cli_info[c][1]
                     
                     row[4] = cinfo[1]
                     row[5] = cinfo[2]
@@ -829,8 +829,8 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
                 arcpy.AddWarning("    there is no appropriate path match "\
                     "for this layer")
                 ss = time.time()-a
-            	sss = str(ss).split(".")[0]
-            	arcpy.AddMessage("      {0} seconds elapsed".format(sss))
+                sss = str(ss).split(".")[0]
+                arcpy.AddMessage("      {0} seconds elapsed".format(sss))
                 continue
 
             ## make selection on layer based on cr id query
