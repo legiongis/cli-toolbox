@@ -665,8 +665,6 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         ## get set of cli_ids and info from the feature table
         arcpy.AddMessage("\nGetting list of CLI_IDs matching query...")
         log.debug("getting list of cli_ids matching query")
-        log.debug(cli_table+" "+tbl_query)
-        log.debug("fields in cli_table: "+",".join(arcpy.ListFields(cli_table)))
         
         id_dict = {}
         arcpy.management.SelectLayerByAttribute(cli_table,"NEW_SELECTION",
