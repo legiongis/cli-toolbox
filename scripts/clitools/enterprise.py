@@ -758,33 +758,21 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
 ##        cr_id_list = [i for i in cr_id_list if i in cr_ids_in_cat]
 ##        arcpy.AddMessage("CR ID list sanitized")
 
-        ## narrow down list of potential feature classes
-        log_name = time.strftime("log_%b%d_%H%M")
-        log_dir = settings['log-dir']
-        if not os.path.isdir(log_dir):
-            os.makedirs(log_dir)
-        log_path = r"{0}\{1}.txt".format(log_dir,log_name)
-        with open(log_path,"a") as log:
-
-            ## use the table query if it is not a landscape that is desired
-            ## this is to allow parks and regions to be downloaded even if there is
-            ## a problem with the cr catalog
-            if qry_lvl == "region":
-                cr_id_qry = '"REG_CODE" = \''+query_code.upper()+"'"
-            elif qry_lvl == "park":
-                cr_id_qry = tbl_query
-            else:
-                cr_id_qry = '"CR_ID" IN (\'{0}\')'.format("','".join(cr_id_list))
-            print >> log, cr_id_qry
-
-        arcpy.AddMessage("LOG CREATED: " + log_path)
-        os.startfile(log_path)
+        if qry_lvl == "region":
+            cr_id_qry = '"REG_CODE" = \''+query_code.upper()+"'"
+        elif qry_lvl == "park":
+            cr_id_qry = tbl_query
+        else:
+            cr_id_qry = '"CR_ID" IN (\'{0}\')'.format("','".join(cr_id_list))
+            
+        log.debug("cr_id_qry: "+cr_id_qry)
         
         arcpy.management.SelectLayerByAttribute(cr_catalog,
             "NEW_SELECTION",cr_id_qry)
         with arcpy.da.SearchCursor(cr_catalog,"FEATURE_CLASS_NAME") as c:
             fclasses = [row[0] for row in c]
         unique_fcs = set(fclasses)
+        log.debug("pulling from these fclasses: "+",".join(fclasses))
         ct = int(arcpy.management.GetCount(cr_catalog).getOutput(0))
         arcpy.AddMessage("    {0} GEOM_ID{1} found".format(ct,
             "" if ct == 1 else "s"))
