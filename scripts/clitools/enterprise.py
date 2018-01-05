@@ -656,7 +656,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
             if not f.endswith(".lock"):
                 shutil.copy2(os.path.join(blank_gdb,f), new_gdb)
                 
-        log.debug("output gdb: "+new_gdb)
+        log.debug("blank output gdb created: "+new_gdb)
         arcpy.AddMessage("\nOutput Geodatabase:\n{0}".format(new_gdb))
 
         ## make path list for all potential destination feature classes in new gdb
