@@ -502,9 +502,6 @@ def ExtractFromEnterpriseSelection(map_document,output_location,
             arcpy.management.Append(src,dpath,"NO_TEST")
             arcpy.AddMessage("    feature{0} exported to {1}".format(
                 '' if ct == 1 else "s",os.path.basename(dpath)))
-
-            TakeOutTrash(proj)
-            TakeOutTrash(copy)
                 
             total_feat+=ct
 
@@ -901,9 +898,6 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
             arcpy.management.Append(src,dpath,"NO_TEST")
             arcpy.AddMessage("    feature{0} exported to {1}".format(
                 '' if ct == 1 else "s",os.path.basename(dpath)))
-            
-            TakeOutTrash(proj)
-            TakeOutTrash(copy)
 
             ss = time.time()-a
             sss = str(ss).split(".")[0]
