@@ -57,7 +57,61 @@ from paths import (
     FeatureLookupTable,
     UnitLookupTable
     )
-
+    
+def InspectMXD(map_document):
+    """ logs the names and fields of all layers and table views in the mxd"""
+    
+    log = logging.getLogger()
+    log.debug("~~~ INSPECTING MAP DOCUMENT CONTENTS ~~~")
+    
+    layers = arcpy.mapping.ListLayers(map_document)
+    tables = arcpy.mapping.ListTableViews(map_document)
+    log.debug("number of layers: "+str(len([l for l in layers if not l.isGroupLayer])))
+    log.debug("number of table views: "+str(len(tables)))
+    
+    log.debug("~~~ LAYER DETAILS ~~~")
+    for layer in layers:
+        if layer.isGroupLayer:
+            continue
+        log.debug("LAYER NAME: "+layer.name)
+        try:
+            log.debug("data source: "+layer.dataSource) 
+        except NameError:
+            log.debug("data source: n/a") 
+        try:
+            ct = str(arcpy.management.GetCount(layer).getOutput(0))
+        except:
+            ct = "n/a"
+        log.debug("feature count: "+ct)
+        try:
+            fields = [f.name for f in arcpy.ListFields(layer)]
+            fields.sort()
+            log.debug("fields: "+",".join(fields))
+        except:
+            log.debug("fields: n/a")
+        
+    
+    log.debug("~~~ TABLE VIEW DETAILS ~~~")
+    for table in tables:
+        log.debug("TABLE VIEW NAME: "+table.name)
+        try:
+            log.debug("data source: "+table.dataSource) 
+        except NameError:
+            log.debug("data source: n/a") 
+        try:
+            ct = str(arcpy.management.GetCount(table).getOutput(0))
+            log.debug("row count: "+ct)
+        except:
+            log.debug("row count: n/a")
+        try:
+            fields = [f.name for f in arcpy.ListFields(table)]
+            fields.sort()
+            log.debug("fields: "+",".join(fields))
+        except:
+            log.debug("fields: n/a")
+    
+    return
+        
 def CheckForEnterpriseTables(map_document):
     """ Check the input map document for the three tables that are necessary
     for exporting or analyzing data in the CR Enterprise:
@@ -311,7 +365,7 @@ def ExtractFromEnterpriseSelection(map_document,output_location,
     records for all selected features."""
 
     try:
-
+        InspectMXD(map_document)
         tables = CheckForEnterpriseTables(map_document)
         if not tables:
             return
@@ -610,6 +664,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         log.debug("qry_lvl:" + qry_lvl)
 
         ## check for tables
+        InspectMXD(map_document)
         tables = CheckForEnterpriseTables(map_document)
         if not tables:
             return
@@ -669,12 +724,13 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         id_dict = {}
         arcpy.management.SelectLayerByAttribute(cli_table,"NEW_SELECTION",
             tbl_query)
-            
-        log.debug("selection made")
-            
+        
+        feat_ct = str(arcpy.management.GetCount(cli_table).getOutput(0))
+        log.debug(feat_ct+" rows selected in cli table")
+        log.debug("now collecting CLI_ID and CLI_NUM info from cli table")
         fields = ["CLI_ID","CLI_NUM","LAND_CHAR","ALPHA_CODE",
                     "REGION_CODE","RESNAME"]
-        log.debug("query fields: "+",".join(fields))
+        log.debug("cursor fields: "+",".join(fields))
         with arcpy.da.SearchCursor(cli_table,fields) as cursor:
             for row in cursor:
                 if not row[0] in id_dict.keys():
@@ -688,7 +744,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         n = len(id_list)
         arcpy.AddMessage("    {0} CLI_ID{1} found".format(
             n,'' if n == 1 else 's'))
-        log.debug("cli_ids found: "+str(n))
+        log.debug("cli_ids collected: "+str(n))
 
         arcpy.AddMessage("\n---DOWNLOADING TABULAR DATA---\n")
         log.debug("DOWNLOADING TABULAR DATA")
