@@ -1079,7 +1079,7 @@ def CREnterpriseMultipleXLS(map_document,input_code,output_dir):
         arcpy.AddError("\nInvalid input code.\n")
         return False
     elif len(input_code) == 3:
-        query = '"REGION_CODE" = \'' + input_code.upper() + "'"
+        query = '"REGION_NAME" = \'' + input_code.upper() + "'"
     elif len(input_code) == 4:
         query = '"ALPHA_CODE" = \'' + input_code.upper() + "'"  
     else:

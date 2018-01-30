@@ -643,7 +643,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         log = logging.getLogger()
         ## make feature table queries based on input query code
         if len(query_code) == 3:
-            tbl_query = '"REGION_CODE" = \''+query_code.upper()+"'"
+            tbl_query = '"REGION_NAME" = \''+query_code.upper()+"'"
             qry_lvl = "region"
         elif len(query_code) == 4:
             tbl_query = '"ALPHA_CODE" = \''+query_code.upper()+"'"
@@ -726,7 +726,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         log.debug(feat_ct+" rows selected in cli table")
         log.debug("now collecting CLI_ID and CLI_NUM info from cli table")
         fields = ["CLI_ID","CLI_NUM","LAND_CHAR","ALPHA_CODE",
-                    "REGION_CODE","RESNAME"]
+                    "REGION_NAME","RESNAME"]
         log.debug("cursor fields: "+",".join(fields))
         with arcpy.da.SearchCursor(cli_table,fields) as cursor:
             for row in cursor:
