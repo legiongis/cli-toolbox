@@ -39,16 +39,16 @@ import traceback
 import time
 import xlrd
 import logging
-from clitools.config import settings
+from .config import settings
 
-from general import (
+from .general import (
     TakeOutTrash,
     MakePathList,
     GetParkTypeDictionary,
     FieldCalculateRegionCode,
     )
 
-from paths import (
+from .paths import (
     GDBstandard,
     GDBstandard_link,
     GDBstandard_WGS84,

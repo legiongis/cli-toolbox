@@ -23,9 +23,9 @@ import time
 import os
 import shutil
 import logging
-# import logging.handlers
-from clitools.config import settings
-from paths import BinGDB
+
+from .paths import BinGDB
+from .config import settings
 
 def StartLog(level="INFO",name="output"):
     ## remove any existing handlers

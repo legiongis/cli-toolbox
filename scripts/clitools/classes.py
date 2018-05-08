@@ -33,7 +33,7 @@ their contents into the site-packages folder.
 
 import arcpy
 from general import TakeOutTrash
-
+from .config import settings
 from paths import FeatureLookupTable
 from paths import UnitLookupTable
 

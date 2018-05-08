@@ -5,7 +5,7 @@ use these variables.
 """
 
 import os
-from clitools.config import settings
+from .config import settings
 
 BinDir = os.path.join(settings['toolbox-location'],'scripts','clitools','bin')
 LayerDir = os.path.join(BinDir,"layer files")

@@ -25,11 +25,12 @@ import shutil
 import sys
 import traceback
 import time
-from clitools.config import settings
-from classes import MakeUnit
-from summarize import MakeSingleLandscapeXLS
 
-from general import (
+from .classes import MakeUnit
+from .summarize import MakeSingleLandscapeXLS
+from .config import settings
+
+from .general import (
     MakePathList,
     TakeOutTrash,
     GetCRLinkAndCRCatalogPath,
@@ -38,7 +39,7 @@ from general import (
     StartLog
     )
 
-from paths import (
+from .paths import (
     GDBstandard,
     GDBscratch,
     MXDtemplate,

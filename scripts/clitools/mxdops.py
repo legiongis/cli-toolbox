@@ -24,9 +24,10 @@ import traceback
 import sys
 import string
 import time
-from classes import MakeUnit
+from .classes import MakeUnit
+from .config import settings
 
-from general import (
+from .general import (
     Print,
     TakeOutTrash,
     ConvertContribStatus,
@@ -34,14 +35,14 @@ from general import (
     GetCRLinkAndCRCatalogPath
     )
 
-from management import (
+from .management import (
     GetMultiplesGUIDs,
     GetIDFieldGUIDs,
     GetCLI_IDGUIDs,
     GetGUIDsFromCatalog
     )
 
-from paths import (
+from .paths import (
     LayerDir,
     FeatureLookupTable,
     UnitLookupTable,

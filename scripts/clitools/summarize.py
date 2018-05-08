@@ -29,8 +29,9 @@ from time import strftime
 import xlrd
 import xlwt
 
-from classes import MakeUnit
-from enterprise import CheckForEnterpriseTables
+from .classes import MakeUnit
+from .enterprise import CheckForEnterpriseTables
+from .config import settings
 
 from general import (
     Print,
