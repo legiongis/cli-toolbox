@@ -46,6 +46,7 @@ from .general import (
     MakePathList,
     GetParkTypeDictionary,
     FieldCalculateRegionCode,
+    StartLog
     )
 
 from .paths import (
@@ -61,7 +62,7 @@ from .paths import (
 def InspectMXD(map_document):
     """ logs the names and fields of all layers and table views in the mxd"""
     
-    log = logging.getLogger()
+    log = StartLog(name='InspectMXD')
     log.debug("~~~ INSPECTING MAP DOCUMENT CONTENTS ~~~")
     
     layers = arcpy.mapping.ListLayers(map_document)
@@ -640,7 +641,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
     download the CR Link table for these records, if desired."""
 
     try:
-        log = logging.getLogger()
+        log = StartLog(name='ExtractFromEnterpriseQuery')
         ## make feature table queries based on input query code
         if len(query_code) == 3:
             tbl_query = '"REGION_NAME" = \''+query_code.upper()+"'"
@@ -656,7 +657,6 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
                 "again.\n")
             return False
         
-        log.debug("now inside enterprise.ExtractFromEnterpriseQuery")
         log.debug("tbl_query:" + tbl_query)
         log.debug("qry_lvl:" + qry_lvl)
 
@@ -825,7 +825,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         with arcpy.da.SearchCursor(cr_catalog,"FEATURE_CLASS_NAME") as c:
             fclasses = [row[0] for row in c]
         unique_fcs = set(fclasses)
-        log.debug("pulling from these fclasses: "+",".join(fclasses))
+        log.debug("pulling from these fclasses: "+",".join(unique_fcs))
         ct = int(arcpy.management.GetCount(cr_catalog).getOutput(0))
         arcpy.AddMessage("    {0} GEOM_ID{1} found".format(ct,
             "" if ct == 1 else "s"))
@@ -839,15 +839,17 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         arcpy.AddMessage("\n---DOWNLOADING SPATIAL DATA---\n")
 
         ## iterate through layers and apply cr_id query
+        log.debug("iterating through layers and apply cr_id query")
         totaltime = 0
         for layer in arcpy.mapping.ListLayers(map_document):
 
-            ## get datasource name for layer
+        ## get datasource name for layer
             if not layer.supports("DATASOURCE"):
                 continue
             lyr_src = layer.dataSource.lower()
            
             ## skip the feature class if no cli features are in it.
+            log.debug(layer.name)
             arcpy.AddMessage(layer)
             a = time.time()
             skip = True           
@@ -855,6 +857,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
                 if lyr_src.find(f) != -1:
                     skip = False
             if skip:
+                log.debug("    ...no features")
                 arcpy.AddMessage("    ...no features")
                 continue
 
@@ -873,6 +876,7 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
                 continue
 
             ## make selection on layer based on cr id query
+            
             arcpy.management.SelectLayerByAttribute(layer,"NEW_SELECTION",cr_id_qry)
             ct = int(arcpy.management.GetCount(layer).getOutput(0))
             arcpy.AddMessage("    {0} feature{1}".format(ct,'' if ct == 1 else 's'))
