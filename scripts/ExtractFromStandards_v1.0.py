@@ -17,6 +17,16 @@ module."""
 
 input_gdb = arcpy.GetParameterAsText(0)
 output_dir = arcpy.GetParameterAsText(1)
-incode = arcpy.GetParameterAsText(2)
+filter_by = arcpy.GetParameterAsText(2)
+incodes = arcpy.GetParameter(3)
 
-ExtractFromStandards(input_gdb,incode,output_dir)
+if filter_by == "CLI Number":
+    filter_field = "CLI_NUM"
+elif filter_by == "Alpha Code":
+    filter_field = "ALPHA_CODE"
+elif filter_by == "Region":
+    filter_field = "REG_CODE"
+else:
+    exit()
+
+ExtractFromStandards(input_gdb,filter_field,incodes,output_dir)

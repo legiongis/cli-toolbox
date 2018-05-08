@@ -34,7 +34,8 @@ from general import (
     TakeOutTrash,
     GetCRLinkAndCRCatalogPath,
     Print,
-    Print3
+    Print3,
+    StartLog
     )
 
 from paths import (
@@ -449,27 +450,26 @@ def CreateNewProjectFolder(destination,region_code,alpha_code,cli_num,
     if open_mxd:
         os.startfile(new_mxd_path)
 
-def ExtractFromStandards(input_geodatabase,input_code,output_location):
-    """Creates a query from the input code and extracts all matching data
+def ExtractFromStandards(input_geodatabase,filter_field,input_codes,output_location):
+    """Creates a query from the input codes and extracts all matching data
     from the input geodatabase to a new geodatabase in the output_location."""
 
+    log = StartLog(name="ExtractFromStandards",level="DEBUG")
+    
     try:
-        ## make feature table queries based on input query code
-        arcpy.AddMessage(len(input_code))
-        if len(input_code) == 4:
-            query = '"ALPHA_CODE" = \''+input_code+"'"
-        elif len(input_code) == 6:
-            query = '"CLI_NUM" = \''+input_code+"'"
-        else:
-            arcpy.AddError("\nThis input code is invalid.  Double check and try "\
-                "again.\n")
-            return False
+
+        query = '"{}" IN (\'{}\')'.format(filter_field,"','".join(input_codes))
+        log.info("query: "+query)
 
         ## make new gdb to hold extract
-        #blank_gdb = os.path.join(bin_dir,"CLI_standard_template.gdb")
-        blank_gdb = GDBstandard
+
+        blank_gdb = GDBstandard_WGS84
+        if len(input_codes) == 1:
+            new_gdb_suffix = input_codes[0]
+        else:
+            new_gdb_suffix = input_codes[0]+"_etc"
         new_gdb = os.path.join(output_location,time.strftime(
-            "{0}_%b%d_%H%M".format(input_code)))
+            "{0}_%b%d_%H%M".format(new_gdb_suffix)))
 
         ## if gdb already exists, add integer to end of new name
         new_name = new_gdb
@@ -490,11 +490,20 @@ def ExtractFromStandards(input_geodatabase,input_code,output_location):
         cr_guids = []
         total = 0
         for path in MakePathList(input_geodatabase,True):
-
+        
+            log.debug("processing: "+path)
+            
+            ## not the most robust solution, but skipping and fcs that don't have
+            ## the necessary field. specfically, surv may not have CLI_NUM.
+            if not filter_field in [f.name for f in arcpy.ListFields(path)]:
+                log.debug(filter_field + " not found, skipping")
+                continue
+            
             fc_nam = os.path.basename(path)
 
             fl = "fl"
             TakeOutTrash(fl)
+            log.debug("applying query")
             arcpy.management.MakeFeatureLayer(path,fl,query)
             ct = int(arcpy.management.GetCount(fl).getOutput(0))
             if ct == 0:
