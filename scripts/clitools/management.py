@@ -36,7 +36,8 @@ from .general import (
     GetCRLinkAndCRCatalogPath,
     Print,
     Print3,
-    StartLog
+    StartLog,
+    MakeBlankGDB,
     )
 
 from .paths import (
@@ -1278,23 +1279,15 @@ def ScratchToStandardsGDB(scratch_gdb,feature_classes,target_gdb=False):
     user will have to Make GUIDs in the new geodatabase (or target), and
     also will have to Sync CR_Link to get everything updated."""
 
-    blank_gdb = GDBstandard
-
     if not target_gdb:
-        new_gdb = os.path.splitext(scratch_gdb.replace("scratch","standards"))[0]
-        new_name = new_gdb
-        r = 1
-        while os.path.isdir(new_name+ ".gdb"):
-            new_name = new_gdb+"_"+str(r)
-            r+=1
-        new_gdb = new_name + ".gdb"
-        os.makedirs(new_gdb)
-        for f in os.listdir(blank_gdb):
-            if not f.endswith(".lock"):
-                shutil.copy2(os.path.join(blank_gdb,f), new_gdb)
+        
+        new_gdb_path = scratch_gdb.replace("scratch","standards")
+        new_gdb = MakeBlankGDB(GDBstandard_WGS84,new_gdb_path)
 
     else:
         new_gdb = target_gdb
+        
+    arcpy.AddMessage(new_gdb)
 
     arcpy.AddMessage("\nFeatures will be migrated to:\n{0}".format(new_gdb))
 
@@ -1306,10 +1299,10 @@ def ScratchToStandardsGDB(scratch_gdb,feature_classes,target_gdb=False):
     for fc in feature_classes:
         if not fc in scratch_fcs and not fc[:4] == "imp_":
             continue
-
+        
         arcpy.AddMessage("\n"+fc)
+        
         fc_path = os.path.join(scratch_gdb,fc)
-
         total = 0
 
         cursor = arcpy.da.SearchCursor(fc_path,"fclass")
@@ -1338,10 +1331,52 @@ def ScratchToStandardsGDB(scratch_gdb,feature_classes,target_gdb=False):
             ct = int(arcpy.management.GetCount(fl).getOutput(0))
             if ct == 0:
                 continue
-
-            arcpy.management.Append(fl,path,"NO_TEST")
-            arcpy.AddMessage("  {0} feature{1} added to {2}".format(
+                
+            arcpy.AddMessage("  {0} feature{1} to be added to {2}".format(
                 ct,'' if ct == 1 else 's',name))
+            
+            src_sr = arcpy.Describe(fc_path).spatialReference
+            src_epsg = src_sr.GCS.GCScode
+            targ_sr = arcpy.Describe(path).spatialReference
+            targ_epsg = targ_sr.GCS.GCScode
+            both_epsgs = [src_epsg,targ_epsg]
+            
+            if src_epsg == targ_epsg:
+                pass
+            ## transform between NAD27 and NAD83
+            if 4267 in both_epsgs and 4269 in both_epsgs:
+                transformation = 'NAD_1927_To_NAD_1983_NADCON'
+                
+            ## transform between NAD27 and WGS84
+            elif 4267 in both_epsgs and 4326 in both_epsgs:
+                transformation = settings['trans-nad27-wsg84']
+                
+            ## transform between NAD83 and WGS84
+            elif 4269 in both_epsgs and 4326 in both_epsgs:
+                transformation = settings['trans-nad83-wsg84']
+            else:
+                arcpy.AddMessage("Not prepared to project/transform to or from one"\
+                "or both of the spatial references involved:\nsource: {}\n target:{}"\
+                "\nPlease manually project to a spatial reference that uses NAD83"\
+                " (EPSG:4269), NAD27 (EPSG:4267), or WGS84 (EPSG:4326), and then"\
+                "re-run this tool")
+                exit()
+                
+            ## if the target and source match, all good!
+            if not src_epsg == targ_epsg:
+                arcpy.AddMessage("    projecting from {} to {}".format(src_sr.name,targ_sr.name))
+                arcpy.AddMessage("    transformation: {}".format(transformation))
+                
+                temp_fc = os.path.join(settings['cache'],"temp.shp")
+                TakeOutTrash(temp_fc)
+                arcpy.management.Project(fc_path,temp_fc,targ_sr,transformation)
+                arcpy.management.Append(fl,temp_fc,"NO_TEST")
+                TakeOutTrash(temp_fc)
+            
+            else:
+                arcpy.management.Append(fl,path,"NO_TEST")
+
+            arcpy.AddMessage("      ...done")
             total+=ct
 
         arcpy.AddMessage("  --{0} total feature{1} migrated".format(
