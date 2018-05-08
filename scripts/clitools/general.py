@@ -478,3 +478,22 @@ def ExportGDBToShapefiles(input_gdb,output_location):
         arcpy.management.CopyFeatures(path,out_file)
 
     arcpy.AddMessage("\nExport Complete.")
+    
+def MakeBlankGDB(template_path,output_gdb_path):
+    """creates a blank geodatabase from the input template. If a gdb of the
+    same name as the desired output already exists, then ascending numbers will
+    be suffixed as necessary"""
+    
+    new_gdb = os.path.splitext(output_gdb_path)[0]
+    new_name = new_gdb
+    r = 1
+    while os.path.isdir(new_name+ ".gdb"):
+        new_name = new_gdb+"_"+str(r)
+        r+=1
+    new_gdb = new_name + ".gdb"
+    os.makedirs(new_gdb)
+    for f in os.listdir(template_path):
+        if not f.endswith(".lock"):
+            shutil.copy2(os.path.join(template_path,f), new_gdb)
+    
+    return new_gdb
