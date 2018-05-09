@@ -27,7 +27,7 @@ import logging
 from .paths import BinGDB
 from .config import settings
 
-def StartLog(level="INFO",name="output"):
+def StartLog(level=settings['log-level'],name="output"):
     ## remove any existing handlers
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
