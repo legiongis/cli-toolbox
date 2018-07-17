@@ -30,7 +30,7 @@ for d in dirs:
         try:
             os.makedirs(d)
         except WindowsError:
-            raise Exception("Invalid CLI GIS Directory path, operation cancelled.")
+            raise Exception("Invalid directory path: {}\n  operation cancelled.".format(d))
         
 settings_file = os.path.join(settings['toolbox-location'],"scripts","clitools","config","settings.json")
 

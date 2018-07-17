@@ -1484,8 +1484,7 @@ def StandardsToStandardsGDB(in_geodatabase,target_gdb):
 
 def StandardsToWGS84(geodatabase):
     """ Creates a version of the input standards geodatabase with all of the
-    feature classes projected to WGS84.  The NAD_1983_To_WGS_1984_1 trans-
-    formation is used."""
+    feature classes projected to WGS84."""
 
     arcpy.AddMessage("\nPROJECTING TO WSG84 and APPENDING FEATURE CLASSES")
 
@@ -1516,6 +1515,7 @@ def StandardsToWGS84(geodatabase):
     trans = settings['trans-nad83-wgs84']
     arcpy.AddMessage("\nOutput geodatabase: "+new_WGS84_gdb)
     arcpy.AddMessage("\nTransformation used: "+trans)
+    arcpy.AddMessage("(transformation can be changed with the Configure Toolbox tool)")
 
     a83paths = MakePathList(geodatabase,True)
     a84paths = MakePathList(new_WGS84_gdb,True)
@@ -1562,7 +1562,10 @@ def StandardsToWGS84(geodatabase):
 
     for x,y in [(old_cr_link,new_cr_link),(old_cr_catalog,new_catalog_link)]:
         arcpy.AddMessage("  "+os.path.basename(x))
-        arcpy.management.Append(x,y,"NO_TEST")
+        try:
+            arcpy.management.Append(x,y,"NO_TEST")
+        except:
+            arcpy.AddMessage("  ~~error encountered, skipping~~")
 
     arcpy.AddMessage("\n--process finished--")
 
