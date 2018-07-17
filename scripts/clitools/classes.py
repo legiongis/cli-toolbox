@@ -322,15 +322,19 @@ def MakeUnit(user_input):
     user puts in a valid code.  No exceptions will be triggered in this
     usage.'''
 
-    if len(str(user_input)) == 3:
-        return Region(str(user_input))
+    try:
+        if len(str(user_input)) == 3:
+            return Region(str(user_input))
 
-    elif len(str(user_input)) == 4:
-        return Park(str(user_input))
+        elif len(str(user_input)) == 4:
+            return Park(str(user_input))
 
-    elif len(str(user_input)) == 6:
-        return Landscape(str(user_input))
-    
-    else:
+        elif len(str(user_input)) == 6:
+            return Landscape(str(user_input))
+        
+        else:
+            return False
+            
+    except:
         return False
 
