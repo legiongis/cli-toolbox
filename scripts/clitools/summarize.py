@@ -1066,7 +1066,7 @@ def CREnterpriseMultipleXLS(map_document,input_code,output_dir):
     
     arcpy.AddMessage("tables found:")
     for t in tables:
-        arcpy.AddMessage(table)
+        arcpy.AddMessage(t)
         
     if not tables:
         return False
