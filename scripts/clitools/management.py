@@ -941,7 +941,7 @@ def ImportToScratchGDB(input_fc,gdb_path,clip_features='',
         if trans:
             arcpy.AddMessage("projecting input dataset to WGS 84, using "\
                             "transformation: "+trans+"\n")
-            proj_int = os.path.join(os.path.join(cache_dir,"import_wsg84.shp"))
+            proj_int = os.path.join(os.path.join(cache_dir,"import_wgs84.shp"))
             TakeOutTrash(proj_int)
             arcpy.management.Project(input_fc,proj_int,WGS84prj,trans)
             input_fc = proj_int
@@ -1349,11 +1349,11 @@ def ScratchToStandardsGDB(scratch_gdb,feature_classes,target_gdb=False):
                 
             ## transform between NAD27 and WGS84
             elif 4267 in both_epsgs and 4326 in both_epsgs:
-                transformation = settings['trans-nad27-wsg84']
+                transformation = settings['trans-nad27-wgs84']
                 
             ## transform between NAD83 and WGS84
             elif 4269 in both_epsgs and 4326 in both_epsgs:
-                transformation = settings['trans-nad83-wsg84']
+                transformation = settings['trans-nad83-wgs84']
             else:
                 arcpy.AddMessage("Not prepared to project/transform to or from one"\
                 "or both of the spatial references involved:\nsource: {}\n target:{}"\
