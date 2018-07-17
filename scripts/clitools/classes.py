@@ -57,36 +57,52 @@ cli_num_and_region_dict = {}
 cli_num_and_name_dict = {}
 
 ## new cursor operation (using arcpy.da.SearchCursor)
-fields = ["ALPHA_CODE","REGION_CODE","PARK_NAME","CLI_NUM","CLI_NAME"]
+fields = ["ALPHA_CODE","REGION_NAME","PARK_NAME","CLI_NUM","CLI_NAME"]
 sql_clause = (None,"ORDER BY ALPHA_CODE, CLI_NUM")
 
 ## use try/except statements in case the sql_clause argument makes trouble
 try:
     rows = arcpy.da.SearchCursor(UnitLookupTable,fields,sql_clause=sql_clause)
-    arcpy.AddMessage("landscape list is sorted")
 except:
     rows = arcpy.da.SearchCursor(UnitLookupTable,fields)
-    arcpy.AddMessage("landscape list is not sorted")
 
 for row in rows:
     alpha = row[0]
     region_code = row[1]
     park_name = row[2]
     cli_num = row[3]
-
     cli_name = row[4].encode('ascii','ignore')
 
-    if not alpha in alpha_and_region_dict.iterkeys():
+    try:
+        alpha_and_region_dict[alpha]
+    except KeyError:
         alpha_and_region_dict[alpha] = region_code
-    if not alpha in alpha_and_name_dict.iterkeys():
+
+    try:
+        alpha_and_name_dict[alpha]
+    except KeyError:
         alpha_and_name_dict[alpha] = park_name
-    if not cli_num in cli_num_and_alpha_dict.iterkeys():
+
+    try:
+        cli_num_and_alpha_dict[cli_num]
+    except KeyError:
         cli_num_and_alpha_dict[cli_num] = alpha
-    if not cli_num in cli_num_and_region_dict.iterkeys():
+
+    try:
+        cli_num_and_region_dict[cli_num]
+    except KeyError:
         cli_num_and_region_dict[cli_num] = region_code
-    if not cli_num in cli_num_and_name_dict.iterkeys():
+
+    try:
+        cli_num_and_name_dict[cli_num]
+    except KeyError:
         cli_num_and_name_dict[cli_num] = cli_name
+
 del rows, row
+
+print "regions: {}".format(len(region_dict))
+print "parks: {}".format(len(alpha_and_region_dict))
+print "landscapes: {}".format(len(cli_num_and_name_dict))
 
 
 class Landscape(object):
@@ -119,6 +135,7 @@ class Landscape(object):
         a = cli_num_and_alpha_dict[in_code]
         object.__setattr__(self, "park", (a,alpha_and_name_dict[a]))
         r = cli_num_and_region_dict[in_code]
+
         object.__setattr__(self, "region", (r,region_dict[r]))
         object.__setattr__(self, "query", ('"CLI_NUM" = \'{0}\''.format(
             in_code)))
@@ -172,7 +189,7 @@ class Landscape(object):
             "CLI_NUM","LCS_ID","HS_ID","CLI_ID","REGION_NAME","ALPHA_CODE"]
         for f in feat_fields:
             if not f in [i.name for i in arcpy.ListFields(FeatureLookupTable)]:
-                print f
+                print "error: " + f
         sql = (None, "ORDER BY REGION_NAME,ALPHA_CODE,LAND_CHAR,RESNAME")
 
         ## use try/except statements in case the sql_clause argument makes trouble
@@ -208,7 +225,6 @@ class Park(object):
     def __init__(self,in_code):
 
         in_code_up = in_code.upper()
-
         if not in_code_up in alpha_and_region_dict.keys():
             raise ValueError
 
@@ -288,14 +304,7 @@ def AllGoodInputs():
     '''This function returns a list of all the valid alpha, landscape and 
     region codes, mainly used as a list to check input against if necessary'''
 
-    everything = []
-    for i in cli_num_and_name_dict.keys():
-        everything.append(i)
-    for i in alpha_and_name_dict.keys():
-        everything.append(i)
-    for i in region_dict.keys():
-        everything.append(i)
-    return everything
+    return cli_num_and_name_dict.keys() + alpha_and_name_dict.keys() + region_dict.keys()
 
 def MakeUnit(user_input):
     '''This function will take any input code and attempt to make a landscape,
@@ -313,19 +322,15 @@ def MakeUnit(user_input):
     user puts in a valid code.  No exceptions will be triggered in this
     usage.'''
 
-    try:
+    if len(str(user_input)) == 3:
+        return Region(str(user_input))
 
-        if len(str(user_input)) == 3:
-            return Region(str(user_input))
+    elif len(str(user_input)) == 4:
+        return Park(str(user_input))
 
-        elif len(str(user_input)) == 4:
-            return Park(str(user_input))
-
-        elif len(str(user_input)) == 6:
-            return Landscape(str(user_input))
-        
-        else:
-            return False
-
-    except:
+    elif len(str(user_input)) == 6:
+        return Landscape(str(user_input))
+    
+    else:
         return False
+
