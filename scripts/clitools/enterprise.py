@@ -139,7 +139,7 @@ def CheckForEnterpriseTables(map_document):
             " docmument:\n\nCR LINK TABLE\nCR CATALOG TABLE\n"\
             "CLI FEATURE TABLE(...)\n\nMake you are using the CR_Enterprise_"\
             "Public_Access.mxd map document when you run this tool.\n")
-        return False
+        raise Exception
 
     arcpy.AddMessage("    all tables present")
     return t_list
