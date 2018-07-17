@@ -247,10 +247,10 @@ def MakeMultipleLandscapeXLS(input_geodatabase,out_directory,cli_list=[],
         ## make output book path
         gdb_name = os.path.splitext(os.path.basename(input_geodatabase))[0]
         book_path = os.path.join(out_directory,strftime(
-                            "{0}_%b%d_%H%M.xls".format(gdb_name)))
+                            "{0}_%Y%b%d_%H%M.xls".format(gdb_name)))
         if exclude_arch:
             book_path = os.path.join(out_directory,strftime(
-                            "{0}_NoArch_%b%d_%H%M.xls".format(gdb_name)))
+                            "{0}_NoArch_%Y%b%d_%H%M.xls".format(gdb_name)))
 
         ## print output path
         arcpy.AddMessage("\nOutput spreadsheet:\n  {0}\n".format(book_path))
@@ -897,7 +897,7 @@ def CREnterpriseSingleXLS(map_document,input_code,output_dir):
 
     ## create path for new xls file
     new_xls = os.path.join(output_dir,strftime(
-                            "EntXLS_{0}_%b%d_%H%M".format(input_code)))
+                            "EntXLS_{0}_%Y%b%d_%H%M".format(input_code)))
     new_name = new_xls
     r = 1
     while os.path.isfile(new_name+ ".xls"):
@@ -1090,7 +1090,7 @@ def CREnterpriseMultipleXLS(map_document,input_code,output_dir):
 
     ## create path for new xls file
     new_xls = os.path.join(output_dir,strftime(
-                            "EntXLS_{0}_%b%d_%H%M".format(input_code)))
+                            "EntXLS_{0}_%Y%b%d_%H%M".format(input_code)))
     new_name = new_xls
     r = 1
     while os.path.isfile(new_name+ ".xls"):

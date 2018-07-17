@@ -382,15 +382,15 @@ def ExtractFromEnterpriseSelection(map_document,output_location,
         if only_cr_link:
             blank_gdb = GDBstandard_link
             new_gdb = os.path.join(output_location,time.strftime(
-                "EntSelect_CRLink_%b%d_%H%M".format(query_code)))
+                "EntSelect_CRLink_%Y%b%d_%H%M".format(query_code)))
         elif not transform:
             blank_gdb = GDBstandard_WGS84
             new_gdb = os.path.join(output_location,time.strftime(
-                "EntSelect_Spatial_%b%d_%H%M".format(query_code)))
+                "EntSelect_Spatial_%Y%b%d_%H%M".format(query_code)))
         else:
             blank_gdb = GDBstandard
             new_gdb = os.path.join(output_location,time.strftime(
-                "EntSelect_Spatial_%b%d_%H%M_NAD83".format(query_code)))
+                "EntSelect_Spatial_%Y%b%d_%H%M_NAD83".format(query_code)))
         
         ## if gdb already exists, add integer to end of new name
         new_name = new_gdb
@@ -687,15 +687,15 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         if only_cr_link:
             blank_gdb = GDBstandard_link
             new_gdb = os.path.join(output_location,time.strftime(
-                "Ent{0}_CRLink_%b%d_%H%M".format(query_code)))
+                "Ent{0}_CRLink_%Y%b%d_%H%M".format(query_code)))
         elif not transform:
             blank_gdb = GDBstandard_WGS84
             new_gdb = os.path.join(output_location,time.strftime(
-                "Ent{0}_Spatial_%b%d_%H%M".format(query_code)))
+                "Ent{0}_Spatial_%Y%b%d_%H%M".format(query_code)))
         else:
             blank_gdb = GDBstandard
             new_gdb = os.path.join(output_location,time.strftime(
-                "Ent{0}_Spatial_%b%d_%H%M_NAD83".format(query_code)))
+                "Ent{0}_Spatial_%Y%b%d_%H%M_NAD83".format(query_code)))
         
         ## if gdb already exists, add integer to end of new name
         new_name = new_gdb

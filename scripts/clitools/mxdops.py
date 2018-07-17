@@ -1017,7 +1017,7 @@ def MakeKMZ(input_gdb,output_dir,subset_unit_code='',layer_scheme='',
 
         arcpy.RefreshTOC()
 
-        out_name = time.strftime("KMZ Export %b%d %H%M")
+        out_name = time.strftime("KMZ Export %Y%b%d %H%M")
         out_file = output_dir + os.sep + out_name + ".kmz"
         
         

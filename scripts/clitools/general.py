@@ -380,7 +380,7 @@ def BackupGDB(geodatabase,backup_location,comment=''):
         comment = "_"+comment
 
     bu_gdb = "{0}\{1}_{2}{3}.gdb".format(
-        backup_location,gdb_name,time.strftime("%b%d_%H%M"),comment)
+        backup_location,gdb_name,time.strftime("%Y%b%d_%H%M"),comment)
 
     os.makedirs(bu_gdb)
 

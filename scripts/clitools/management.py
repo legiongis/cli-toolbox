@@ -471,7 +471,7 @@ def ExtractFromStandards(input_geodatabase,filter_field,input_codes,output_locat
         else:
             new_gdb_suffix = input_codes[0]+"_etc"
         new_gdb = os.path.join(output_location,time.strftime(
-            "{0}_%b%d_%H%M".format(new_gdb_suffix)))
+            "{0}_%Y%b%d_%H%M".format(new_gdb_suffix)))
 
         ## if gdb already exists, add integer to end of new name
         new_name = new_gdb
