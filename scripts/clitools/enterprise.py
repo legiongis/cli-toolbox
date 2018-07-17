@@ -267,20 +267,12 @@ def ConvertFeatureXLSToGDBTable(input_xls,retain_copy=False,update_local=False):
 
         arcpy.AddMessage("\nWriting all data to new CLI Feature Table...")
         
-        ## make new file geodatabase to hold the new table
-        gdb_path = os.path.join(settings['cli-gis-directory'],"CLI_InfoTable_" + time.strftime("%m%d%y")+".gdb")
-        basename = os.path.basename(gdb_path)
-        r = 1
-        while os.path.isdir(gdb_path):
-            gdb_path = os.path.join(os.path.dirname(gdb_path),basename.rstrip(".gdb")+"_" + str(r) + ".gdb")
-            r+=1
-        arcpy.management.CreateFileGDB(os.path.dirname(gdb_path),os.path.basename(gdb_path))
-        arcpy.management.CreateTable(gdb_path,"CLI_Feature_Table_"+time.strftime("%m%d%y"))
-        new_table = os.path.join(gdb_path,"CLI_Feature_Table_"+time.strftime("%m%d%y"))
+        TakeOutTrash(r"in_memory\cli_feature_table")
+        new_table = arcpy.management.CreateTable("in_memory","cli_feature_table")
 
-        ## add all fields to the new table based on the existing CLIFeatureTable
+        ## add all fields to the new table based on the existing CLIFeatureTable_CREnterprise
         ## in the BinGDB
-        new_table_fields = GetTableFieldsList(os.path.join(BinGDB,"CLIFeatureTable"))
+        new_table_fields = GetTableFieldsList(os.path.join(BinGDB,"CLIFeatureTable_CREnterprise"))
         for f in new_table_fields:
             arcpy.management.AddField(new_table,f[0],"TEXT",
                 field_length=f[1])
@@ -329,18 +321,29 @@ def ConvertFeatureXLSToGDBTable(input_xls,retain_copy=False,update_local=False):
         if update_local:
             arcpy.AddMessage("\nUpdating local tables...")
 
-            new_cli_table = os.path.join(BinGDB,"CLIFeatureTable")
+            new_cli_table = os.path.join(BinGDB,"CLIFeatureTable_CREnterprise")
             TakeOutTrash(new_cli_table)
             arcpy.management.CopyRows(new_table,new_cli_table)
 
             ## make new unit table in local table from new feature table
             MakeLocalTablesFromCLIFeatureTable(BinGDB)
             
-        if not retain_copy:
-            TakeOutTrash(gdb_path)
-        else:
+        if retain_copy:
+            
             arcpy.AddMessage("\nSaving a copy of the new CLI Feature Table here:")
-            arcpy.AddMessage(gdb_path)
+
+            ## make new file geodatabase to hold the retained copy of the table
+            gdb_path = os.path.join(settings['cli-gis-directory'],"CLI_InfoTable_" + time.strftime("%m%d%y")+".gdb")
+            basename = os.path.basename(gdb_path)
+            r = 1
+            while os.path.isdir(gdb_path):
+                gdb_path = os.path.join(os.path.dirname(gdb_path),basename.rstrip(".gdb")+"_" + str(r) + ".gdb")
+                r+=1
+            arcpy.management.CreateFileGDB(os.path.dirname(gdb_path),os.path.basename(gdb_path))
+            arcpy.AddMessage("  "+gdb_path)
+
+            arcpy.management.CopyRows(new_table,os.path.join(gdb_path,"CLI_Feature_Table_"+time.strftime("%m%d%y")))
+            
             arcpy.AddMessage("This table can be used to update the corresponding "\
             "table in the CR Enterprise database.")
         arcpy.AddMessage("\n--process finished--\n")
@@ -972,10 +975,10 @@ def MakeLocalTablesFromCLIFeatureTable(table_geodatabase):
         "tables from CLIFeatureTable...")
 
         ## locate existing feature info table
-        cli_table = os.path.join(table_geodatabase,"CLIFeatureTable")
+        cli_table = os.path.join(table_geodatabase,"CLIFeatureTable_CREnterprise")
 
         if not arcpy.Exists(cli_table):
-            arcpy.AddError("\nThere is no CLIFeatureTable in the input "\
+            arcpy.AddError("\nThere is no CLIFeatureTable_CREnterprise in the input "\
                 "geodatabase.  Run the Update Local CLI Tables tool from the"\
                 "CR Enterprise Access map document.\n")
             return
@@ -1050,7 +1053,7 @@ def UpdateCLITables(map_document):
     arcpy.AddMessage("\nCopying CLI Feature Table from CR Enterprise to "\
         "local toolbox geodatabase...")
 
-    new_table = os.path.join(BinGDB,"CLIFeatureTable")
+    new_table = os.path.join(BinGDB,"CLIFeatureTable_CREnterprise")
     TakeOutTrash(new_table)
     arcpy.management.CopyRows(cli_table, new_table)
     arcpy.AddMessage("  table copied.")

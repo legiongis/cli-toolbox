@@ -25,7 +25,17 @@ if method == "Update Local Tables From CR Enterprise Tables":
     UpdateCLITables(mxd)
 elif method == "Process Local Prepared Excel Workbook (.xls)":
     xls = arcpy.GetParameterAsText(1)
+    if not xls:
+        arcpy.AddError("\nYou must specify a Prepared CLI Feature Table "\
+        "Excel Workbook (.xls).\n")
+        raise Exception
     ul = arcpy.GetParameter(2)
     retain = arcpy.GetParameter(3)
+    if not ul and not retain:
+        arcpy.AddError("\nYou must choose to either \"update local lookup "\
+        "tables\" or \"create a separate .gdb...\" or both. Otherwise "\
+        "the \"Process Local Prepared Excel Workbook (.xls)\" operation does "\
+        "nothing.\n")
+        raise Exception
     ConvertFeatureXLSToGDBTable(xls,retain_copy=retain,update_local=ul)
 
