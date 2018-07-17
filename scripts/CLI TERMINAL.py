@@ -14,18 +14,30 @@
 # ---------------------------------------------------------------------------
 
 print "initializing..."
-import arcpy, sys, traceback
-import os
+import os, sys, traceback
+import arcpy
 from time import strftime
 from clitools.general import AskYesOrNo, GetDirPath
-from clitools.classes import *
-from clitools.management import MakeSpreadsheet
+from clitools.classes import MakeUnit, AllGoodInputs
+# from clitools.management import MakeSpreadsheet
 
-print "\n~~CLI TERMINAL~~\nCommands: xls, mxd, pdf, jpg, sum, quit\n"\
-      "Any combination of commands is valid."
+intro = """
+~~CLI TERMINAL~~
 
-print "\nTo choose a unit, enter one of the following:\n3-letter region code"\
-            "\n4-letter alpha code\n6-digit landscape number"
+Type 'help' for more information.
+Use CTRL + C to exit.
+
+To choose a unit, enter one of the following:
+3-letter region code
+4-letter alpha code
+6-digit landscape number"""
+
+help = """
+Commands: xls, mxd, pdf, jpg, sum, help
+Any combination of commands is valid.
+"""
+
+print intro
 
 need_prompt = True
 
@@ -36,6 +48,10 @@ while True:
     if need_prompt == True:
         print ""
         choice = raw_input(prompt)
+        
+    if "help" in choice.lower():
+        print help
+        choice = False
 
     while MakeUnit(choice) == False:
         choice = raw_input(prompt)
@@ -71,9 +87,7 @@ while True:
     elif unit.type == "landscape":
         prompt = "{0} > {1} > {2} --> ".format(
             unit.region[0],unit.park[0],unit.code)
-    else:
-        pass 
-                 
+
     print ""
     
     next_task = raw_input(prompt).lower()
