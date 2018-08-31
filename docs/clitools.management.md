@@ -1,0 +1,210 @@
+## clitools.management
+
+Contains a variety of functions that are used by the scripts associated
+with the tools in the CLI Toolbox.  These functions tend to deal with the
+management and analysis of CLI spatial data.
+
+If the clitools package is moved to the user's native Python installation
+all of these functions will be available to any python scripting.  Use the
+following syntax to import the function:
+
+from clitools.management import <function_name>
+
+To move the clitools package to the Python folder, find your Python
+installation folder (e.g. C:\Python27), and then find the 
+...\Lib\site-packages directory.  Perform the following actions:
+
+1. Move this clitools folder and all of its contents into the site-packages
+directory.
+2. From within the clitools folder, move the xlrd and xlwt folders and
+their contents into the site-packages folder.
+
+### Functions
+
+##### ConsolidateCRLinkTable
+
+``ConsolidateCRLinkTable(cr_link_path, fc_cr_id_list=False)``
+
+Analyzes a full CR Link table and collapses it down to one row per
+CR_ID.  All program IDs are retained.  Returns a path to a new log file
+if conflicting program IDs have been found.
+
+##### CreateGUIDs
+
+``CreateGUIDs(geodatabase, subset_query='', cr_guid=False, geom_guid=False, overwrite=False)``
+
+Makes new GUIDs for all features in geodatabase, or all that match
+a subset query if it is supplied.  Old GUIDs can be overwritten, and
+the user may indicate which GUIDs to make.  The CR Link and Catalog
+tables will not be affected with this tool, just the feature classes.
+
+If CR GUIDs (CR_IDs) are created, they will be analyzed and transferred
+to match multiple geometry representations of a single physical
+feature.
+
+##### CreateNewProjectFolder
+
+``CreateNewProjectFolder(destination, region_code, alpha_code, cli_num, open_mxd=False)``
+
+Creates a series of new objects to facilitate the creation of data
+for a new cli.  An attempt will be made to create the following:
+
+1. a scratch geodatabase, named <cli_num>_scratch.gdb
+2. a map document, named <cli_num>.mxd
+3. a spreadsheet, named <cli_num>, <cli_name>.xls
+
+If any of the above already exist, they will be skipped (no existing
+data will be overwritten.)
+
+##### ExtractFromStandards
+
+``ExtractFromStandards(input_geodatabase, filter_field, input_codes, output_location)``
+
+Creates a query from the input codes and extracts all matching data
+from the input geodatabase to a new geodatabase in the output_location.
+
+##### GetCLI_IDGUIDs
+
+``GetCLI_IDGUIDs(cr_link_path, cli_id_list)``
+
+Looks through the CR Link table in the geodatabase holding the input
+feature class, and finds the GEOMETRY_GUIDs for all the features that
+are in the list of CLI_IDs that is provided.
+
+##### GetGUIDsFromCatalog
+
+``GetGUIDsFromCatalog(catalog_table, cr_guids)``
+
+Given a set of input CR GUIDs, or CR_IDs, the function will return all
+of the corresponding GEOM_IDs from the catalog table.
+
+##### GetIDFieldGUIDs
+
+``GetIDFieldGUIDs(fc_path, id_field, old_query)``
+
+This function looks through the CR Link table in the geodatabase
+holding the input feature class, and finds the CR GUIDs for all
+the features that have a value in the user specified id field.  That
+full list is then checked against the list of all CR_IDs in the input
+feature class.  The result is a tuple:
+
+(with_id_guids,without_id_guids)
+
+##### GetMultiplesGUIDs
+
+``GetMultiplesGUIDs(fc_path, subset_query)``
+
+This function takes a feature class and produces a list
+of GEOM_IDs for the features that are multiple geometries of
+other feature classes.  a subset query can be applied.
+
+the results is a tuple of lists:
+(bad_guids,good_guids)
+
+##### ImportKMLToGDB
+
+``ImportKMLToGDB(kml_or_kmz_file, target_gdb)``
+
+This function just takes the input file and uses the ESRI
+arcpy.conversion.KMLToLayer() tool to place a feature class in
+the target geodatabase.  If run from ArcMap, the new layer will
+be added to the dataframe.  Technically this is against GE license
+agreement if the data is to be used in a final product, so this
+function is not actually used anywhere right now.
+
+##### ImportToScratchGDB
+
+``ImportToScratchGDB(input_fc, gdb_path, clip_features='', variable_dictionary={}, keep_native=False)``
+
+Imports the input features to a target geodatabase, and adds all NPS
+CR spatial data transfer standards fields during the process.  They will
+be prepopulated with the attributes provided in the variable dictionary.
+
+##### MergeCRLinkTables
+
+``MergeCRLinkTables(input_table, target_table)``
+
+Merges two CR Link tables, and makes sure that no progam IDs
+are lost in the process.  If conflicting IDs are found for certain
+programs in the same CR_ID, a log is created.
+
+##### ProcessFeatureClass
+
+``ProcessFeatureClass(feature_class, target_gdb)``
+
+Takes the features from the input feature class and sorts them based
+on the fclass field value into the appropriate feature class in the
+provided target_gdb.
+
+##### ProjectGDBtoNAD83
+
+``ProjectGDBtoNAD83(geodatabase, gdbtype, transformation)``
+
+takes a standards gdb or scratch gdb (this must be specified) and
+"reprojects" all of the feature classes into a NAD83 version
+
+##### ScratchToStandardsGDB
+
+``ScratchToStandardsGDB(scratch_gdb, feature_classes, target_gdb=False)``
+
+Converts a scratch geodatabase into a CLI Standards geodatabase.  If
+the user supplies a target geodatabase, the features from the scratch
+gdb will be appended to the feature classes in the target. At present
+time, this function does not deal with the CR_link table at all, so the
+user will have to Make GUIDs in the new geodatabase (or target), and
+also will have to Sync CR_Link to get everything updated.
+
+##### SpatialAndCLI_IDCompareForGUIDs
+
+``SpatialAndCLI_IDCompareForGUIDs(featurelayer1='', featurelayer2='')``
+
+This function will return a list of GEOM_IDs from featurelayer1
+that are multiple representations of CLI features in featurelayer2.
+The GUIDs returned will be for those features in  that overlap a
+"larger" representation of the same CLI feature (i.e. have the same
+CLI_ID). It is intended that 1 will be a "smaller" feature class shape
+than 2, e.g. 1 will be a point feature class, and 2 is a line or
+polygon feature class.
+
+This function is similar to the TransferCR_IDs function.
+
+##### StandardsToStandardsGDB
+
+``StandardsToStandardsGDB(in_geodatabase, target_gdb)``
+
+This function will take an input geodatabase and merge with an existing
+target geodatabase.  The input and target must both already be in the
+CLI Standard format.
+
+##### StandardsToWGS84
+
+``StandardsToWGS84(geodatabase)``
+
+Creates a version of the input standards geodatabase with all of the
+feature classes projected to WGS84.
+
+##### SyncCRLinkAndCRCatalog
+
+``SyncCRLinkAndCRCatalog(in_gdb)``
+
+Analyzes a geodatabase, and creates or updates the
+CR Link table and CR Catalog.
+
+##### TransferCR_IDs
+
+``TransferCR_IDs(x, y)``
+
+This function takes two input feature classes.  The features from
+the first feature class will be compared to those in the second,
+and if they overlap and have the same CLI_ID, the CR_ID from the first
+will be transferred to the second.
+
+##### UpdateFieldInGDB
+
+``UpdateFieldInGDB(input_geodatabase, field, old_val_list, new_val)``
+
+Takes a list of old values that (presuambly) already exist in the
+input field somewhere within the input geodatabase.  It cycles through
+the entire input geodatabase and replaces any occurrences of the old
+values with the supplied new value.
+
