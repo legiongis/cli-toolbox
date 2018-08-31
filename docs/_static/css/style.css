@@ -1,0 +1,22 @@
+@import url("theme.css");
+
+body {
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
+.wy-side-nav-search {
+    background-color: #B92929;
+}
+
+.wy-nav-side {
+    background: #390000;
+}
+
+.wy-menu-vertical p.caption {
+    color: #b3b3b3;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
