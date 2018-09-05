@@ -1370,7 +1370,7 @@ def ScratchToStandardsGDB(scratch_gdb,feature_classes,target_gdb=False):
                 temp_fc = os.path.join(settings['cache'],"temp.shp")
                 TakeOutTrash(temp_fc)
                 arcpy.management.Project(fc_path,temp_fc,targ_sr,transformation)
-                arcpy.management.Append(fl,temp_fc,"NO_TEST")
+                arcpy.management.Append(temp_fc,path,"NO_TEST")
                 TakeOutTrash(temp_fc)
             
             else:
