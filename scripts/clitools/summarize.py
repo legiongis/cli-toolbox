@@ -839,7 +839,8 @@ def MakeXLSFromSelectedRecords(in_layer,out_path,out_name,fieldnames=[],open=Fal
 
         for k,v in attr.iteritems():
             for n in range(0,len(v)):
-                sheet.write(k+1,n,str(v[n]))
+                val = v[n].encode("ascii","ignore")
+                sheet.write(k+1,n,val)
 
         # save to workbook
         out_workbook = os.path.join(out_path,out_name)
