@@ -765,6 +765,9 @@ def ExtractFromEnterpriseQuery(map_document,query_code,output_location,
         arcpy.AddMessage("    {0} row{1} exported".format(ct,
             "" if ct == 1 else "s"))
         log.debug("append completed")
+        log.debug("fields in new CR Link table:")
+        for field in arcpy.ListFields(new_cr_link):
+            log.debug(field.name)
 
         ## add CLI information to records in CR Link with CLI_ID
         arcpy.AddMessage("    writing CLI_NUM and LAND_CHAR values to CR Link")
