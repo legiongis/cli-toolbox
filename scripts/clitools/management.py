@@ -1344,7 +1344,7 @@ def ScratchToStandardsGDB(scratch_gdb,feature_classes,target_gdb=False):
             if src_epsg == targ_epsg:
                 pass
             ## transform between NAD27 and NAD83
-            if 4267 in both_epsgs and 4269 in both_epsgs:
+            elif 4267 in both_epsgs and 4269 in both_epsgs:
                 transformation = 'NAD_1927_To_NAD_1983_NADCON'
                 
             ## transform between NAD27 and WGS84
@@ -1355,15 +1355,16 @@ def ScratchToStandardsGDB(scratch_gdb,feature_classes,target_gdb=False):
             elif 4269 in both_epsgs and 4326 in both_epsgs:
                 transformation = settings['trans-nad83-wgs84']
             else:
-                arcpy.AddMessage("Not prepared to project/transform to or from one"\
-                "or both of the spatial references involved:\nsource: {}\n target:{}"\
-                "\nPlease manually project to a spatial reference that uses NAD83"\
-                " (EPSG:4269), NAD27 (EPSG:4267), or WGS84 (EPSG:4326), and then"\
-                "re-run this tool")
+                arcpy.AddMessage("Not prepared to project/transform to (or "\
+                "from) one (or both) of the spatial references involved:\n"\
+                "source: {}\n target:{}\nPlease manually project this feature "\
+                "class to a spatial reference that uses NAD83 (EPSG:4269), "\
+                "NAD27 (EPSG:4267), or WGS84 (EPSG:4326), and then re-run "\
+                "this tool".format(src_epsg,targ_epsg))
                 exit()
                 
-            ## if the target and source match, all good!
-            if not src_epsg == targ_epsg:
+            ## transform if the target and source don't match
+            if src_epsg != targ_epsg:
                 arcpy.AddMessage("    projecting from {} to {}".format(src_sr.name,targ_sr.name))
                 arcpy.AddMessage("    transformation: {}".format(transformation))
                 
@@ -1372,7 +1373,7 @@ def ScratchToStandardsGDB(scratch_gdb,feature_classes,target_gdb=False):
                 arcpy.management.Project(fc_path,temp_fc,targ_sr,transformation)
                 arcpy.management.Append(temp_fc,path,"NO_TEST")
                 TakeOutTrash(temp_fc)
-            
+            ## otherwise, just append
             else:
                 arcpy.management.Append(fl,path,"NO_TEST")
 
