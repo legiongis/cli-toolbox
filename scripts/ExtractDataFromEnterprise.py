@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: ExtractCLIDataFromEnterprise_v1.0.py
-# Version: 1.0
+# Title: ExtractCLIDataFromEnterprise.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 

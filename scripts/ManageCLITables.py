@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: UpdateCLITables.py
-# Version: 1.0
+# Title: ManageCLITables.py
 # Created by Adam Cox
 #   
 # Description:  This is a shell script that only needs to pass the current map document

@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: Set_GCS_NAD83.py
+# Title: Set_GCS_WGS84.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 

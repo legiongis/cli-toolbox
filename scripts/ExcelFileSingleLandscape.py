@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: XLSSingleLandscape_v1.0.py
+# Title: ExcelFileSingleLandscape.py
 # Version: 1.0
 # Created by Adam Cox
 #   

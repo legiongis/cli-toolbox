@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: BackupGDB_v1.2.py
-# Version: 1.2
+# Title: BackupGDB.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 

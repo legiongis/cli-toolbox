@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: CheckMandatoryFields_v1.0.py
-# Version: 1.0
+# Title: CheckMandatoryFields.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input  

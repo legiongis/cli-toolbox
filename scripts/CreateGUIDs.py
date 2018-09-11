@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: CalculateGUIDs_v1.6.py
-# Version: 1.6
+# Title: CreateGUIDs.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 

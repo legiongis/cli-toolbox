@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: Set_PCS_UTM.py
+# Title: Set_PCS_UTM_WGS84.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 

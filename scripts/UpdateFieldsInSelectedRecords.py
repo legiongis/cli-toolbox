@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: UpdateFieldsInSelectedRecords_v1.4.py
-# Version: 1.4
+# Title: UpdateFieldsInSelectedRecords.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 

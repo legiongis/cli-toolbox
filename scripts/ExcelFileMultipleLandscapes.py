@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: XLSMultipleLandscapes_v2.py
-# Version: 2.0
+# Title: ExcelFileMultipleLandscapes.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 

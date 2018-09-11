@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: FixFieldInGDB_v1.2.py
-# Version: 1.2
+# Title: ExportGDBToShapefiles.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 

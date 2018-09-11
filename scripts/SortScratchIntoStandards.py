@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: ScratchToStandards_v1.0.py
+# Title: SortScratchIntoStandards.py
 # Version: 1.0
 # Created by Adam Cox
 #   

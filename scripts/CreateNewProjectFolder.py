@@ -1,6 +1,5 @@
 #-------------------------------------------------------------------------------
-# Title: Create New CLI Project
-# Version: 1.0
+# Title: CreateNewProjectFolder
 # Created by Adam Cox
 #
 # Description:  This is the shell script used to translate the input  

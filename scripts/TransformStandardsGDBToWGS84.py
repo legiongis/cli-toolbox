@@ -1,17 +1,15 @@
 # ---------------------------------------------------------------------------
-# Title: MergeCRLinkTables_v1.0.py
-# Version: 1.0
+# Title: TransformStandardsGDBToWGS84.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 
-#    from the tool dialogue into appropriate input for the MergeCRLinkTables
+#    from the tool dialogue into appropriate input for the StandardsToWGS84
 #    function that is held in the clitools.management module.
 # ---------------------------------------------------------------------------
 
-import os
-from clitools.management import MergeCRLinkTables
+import arcpy
+from clitools.management import StandardsToWGS84
 
-in_table = arcpy.GetParameterAsText(0)
-target_table = arcpy.GetParameterAsText(1)
+gdb = arcpy.GetParameterAsText(0)
 
-MergeCRLinkTables(in_table,target_table)
+StandardsToWGS84(gdb)

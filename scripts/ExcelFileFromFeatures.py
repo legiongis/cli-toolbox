@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: MakeXLSFromSelectedRecords.py
-# Version: 1.2
+# Title: ExcelFileFromFeatures.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 

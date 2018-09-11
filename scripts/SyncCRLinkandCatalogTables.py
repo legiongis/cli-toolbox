@@ -1,16 +1,23 @@
 # ---------------------------------------------------------------------------
-# Title: StandardsToWGS84_v1.0.py
-# Version: 1.0
+# Title: SyncCRLinkandCatalogTables.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 
-#    from the tool dialogue into appropriate input for the StandardsToWGS84
+#    from the tool dialogue into appropriate input for the SyncCRLinkAndCRCatalog
 #    function that is held in the clitools.management module.
 # ---------------------------------------------------------------------------
 
+import sys
+import os
 import arcpy
-from clitools.management import StandardsToWGS84
+from time import strftime
+from clitools.management import SyncCRLinkAndCRCatalog
 
 gdb = arcpy.GetParameterAsText(0)
 
-StandardsToWGS84(gdb)
+SyncCRLinkAndCRCatalog(gdb)
+
+
+
+
+

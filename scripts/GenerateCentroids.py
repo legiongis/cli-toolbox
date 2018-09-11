@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: GenerateCentroid_v1.0.py
-# Version: 1.0
+# Title: GenerateCentroids.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 
@@ -28,7 +27,7 @@ layer = arcpy.mapping.Layer(in_layer)
 
 target_layer = layer.dataSource[:-2]+"pt"
 if not arcpy.Exists(target_layer):
-	arcpy.AddError("\nNo easily found target feature class for centroids.\n")
+    arcpy.AddError("\nNo easily found target feature class for centroids.\n")
 
 arcpy.AddMessage("centroids will be appended to:\n" + target_layer)
 

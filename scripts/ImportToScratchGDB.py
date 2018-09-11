@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
-# Title: ImportToScratchGDB_v2.2.py
-# Version: 2.2
+# Title: ImportToScratchGDB.py
 # Created by Adam Cox
 #   
 # Description:  This is the shell script used to translate the input parameters 
